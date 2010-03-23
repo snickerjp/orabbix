@@ -153,7 +153,6 @@ public class Configurator {
       String [] DatabaseList = getDBList();
         	Collection<DBConn> connections = new ArrayList();
         for(int i=0; i<DatabaseList.length; i++) {
-        	
         	connections.add(Configurator.getConnection(DatabaseList[i]));
         }
         //fis.close();
@@ -182,7 +181,7 @@ public class Configurator {
         return DatabaseList;
 	} catch (Exception ex){
 		Logger logger = Logger.getLogger("Orabbix");
-	    logger.error("Error on Configurator getDBList "+ex.getMessage());
+	    logger.error("Error on Configurator while retriving the databases list "+Constants.DATABASES_LIST+" "+ex.getMessage());
 		return null;
 	}
 	}
