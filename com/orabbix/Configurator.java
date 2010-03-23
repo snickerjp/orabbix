@@ -52,6 +52,8 @@ public class Configurator {
 			fisq.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
+			Logger logger = Logger.getLogger("Orabbix");
+   	        logger.error("Error on Configurator  "+e.getMessage());
 			e.printStackTrace();
 		}
     }
@@ -85,7 +87,8 @@ public class Configurator {
  		Query[] queries  = (Query[]) Queries.toArray( new Query[0] );
         return queries;
     	} catch (Exception ex){
-    		ex.printStackTrace();
+    		 Logger logger = Logger.getLogger("Orabbix");
+    	     logger.error("Error on Configurator on getOracleQueries "+ex.getMessage());
     		return null;
     	}
         
@@ -133,11 +136,12 @@ public class Configurator {
             	//System.out.println("--------- on Database -> "+rs.getString("SYS_CONTEXT('USERENV','DB_NAME')"));
             }
             DBConn mydbconn = new DBConn(tds , dbName.toString());
-
-	     return mydbconn;
+    	    return mydbconn;
+    	    
 	} catch (Exception ex){
-		ex.printStackTrace();
-		return null;
+		 Logger logger = Logger.getLogger("Orabbix");
+	     logger.error("Error on Configurator for database "+dbName+ex.getMessage());
+         return null;
 	}
 	}
         
@@ -156,7 +160,8 @@ public class Configurator {
     	DBConn[] connArray  = (DBConn[]) connections.toArray( new DBConn[0] );
         return connArray;
 		} catch (Exception ex){
-			ex.printStackTrace();
+			Logger logger = Logger.getLogger("Orabbix");
+		    logger.error("Error on Configurator getConnections "+ex.getMessage());
 			return null;
 		}
     }
@@ -176,7 +181,8 @@ public class Configurator {
         //fisdb.close();
         return DatabaseList;
 	} catch (Exception ex){
-		ex.printStackTrace();
+		Logger logger = Logger.getLogger("Orabbix");
+	    logger.error("Error on Configurator getDBList "+ex.getMessage());
 		return null;
 	}
 	}
