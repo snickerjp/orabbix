@@ -61,9 +61,11 @@ public class DBEnquiry {
 	            	      }
 	            //	System.out.println( tempStr.toString());
 	            }
-	            if (tempStr==null || tempStr.length()==0)
-	            	if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null)
-	            	tempStr=_queries[i].getNoData();
+	            if (tempStr==null || tempStr.length()==0){
+	            	if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null){
+	            		tempStr=_queries[i].getNoData();
+	            	}
+	            }
 	            Item zitem = new Item(_queries[i].getName(),tempStr);
 	            SZItems.add(zitem);
                 rs.close() ;
