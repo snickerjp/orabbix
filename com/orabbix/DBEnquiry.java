@@ -24,6 +24,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 public class DBEnquiry {
 	public static 	Item[] execute(Query[] _queries, DBConn[] _dbConn) throws Exception {
 	    if (_queries == null || _queries.length<1) {
@@ -51,7 +53,6 @@ public class DBEnquiry {
         	            while(rs.next()){
         	            //	System.out.println(_queries[i].getSQL());
         	            //	System.out.println(_queries[i].getName());
-        	            	System.out.println(rs.getType());
         	            	tempStr=rs.getObject(1).toString().trim();
         	            	while ( rs.next() ) {
         	            		tempStr=tempStr+rs.getObject(1).toString().trim();
@@ -70,6 +71,10 @@ public class DBEnquiry {
         return items;        
 	}
 	
+	
+	/*
+	 * NOT USED
+	 * */
 	public static 	Item[] execute(Query[] _queries, DBConn _dbConn) throws Exception {
 	    if (_queries == null || _queries.length<1) {
             throw new IllegalArgumentException("Query's array is empty or null");
@@ -126,6 +131,9 @@ public class DBEnquiry {
     	 for (int i=0 ; i< _queries.length ;i++)
          {
        //	System.out.println(queries[i].getSQL());
+        	 Logger logger = Logger.getLogger("Orabbix");
+    	     logger.debug("Actual query is "+_queries[i].getName()+" statement is "+_queries[i].getSQL().toString());
+
     		 
        //	System.out.println(queries[i].getName());
            p_stmt = con.prepareStatement(_queries[i].getSQL().toString());
