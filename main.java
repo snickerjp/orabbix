@@ -82,8 +82,7 @@ public class main {
 			Enumeration en = htDBConn.keys() ;
 			ArrayList alDBList =  new ArrayList();
 			 while (en.hasMoreElements()){
-				 alDBList.add(en.toString());
-				 en.nextElement();
+				 alDBList.add((String)en.nextElement());
 			 }
 			String[] newDBList = (String[]) alDBList.toArray(new String [0]);
 			
