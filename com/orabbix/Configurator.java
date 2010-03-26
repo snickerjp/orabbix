@@ -24,7 +24,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -100,7 +102,7 @@ public class Configurator {
 		try{
 			verifyConfig();
 		 Logger logger = Logger.getLogger("Orabbix");
-	     logger.debug("getConnection for databse "+dbName);
+	     logger.debug("getConnection for database "+dbName);
 	     String url= new String(_props.getProperty(dbName+"."+Constants.QUERY_URL));
     	 String uname= new String(_props.getProperty(dbName+"."+Constants.QUERY_USERNAME));
     	 String password= new String(_props.getProperty(dbName+"."+Constants.QUERY_PASSWORD));
@@ -140,7 +142,8 @@ public class Configurator {
     	    
 	} catch (Exception ex){
 		 Logger logger = Logger.getLogger("Orabbix");
-	     logger.error("Error on Configurator for database "+dbName+ex.getMessage());
+	     logger.error("Error on Configurator for database "+dbName+" -->"+ex.getMessage());
+	     logger.error("This Database "+dbName+" will be removed");
          return null;
 	}
 	}

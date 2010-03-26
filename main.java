@@ -17,6 +17,8 @@
  */
  
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -64,39 +66,51 @@ public class main {
 			Configurator cfg =new Configurator(configFile);
 			String [] DatabaseList = cfg.getDBList();
 			
-         	 ExecutorService executor = 
+         	ExecutorService executor = 
 	               Executors.newFixedThreadPool(DatabaseList.length);
 			DBConn[] myDBConn = cfg.getConnections();
+			
 			Hashtable<String, SharedPoolDataSource> htDBConn = new Hashtable<String, SharedPoolDataSource>();
+			
 			for (int i=0; i<myDBConn.length ;i++){
+				if (myDBConn[i]!=null){
 				htDBConn.put(myDBConn[i].getName(), myDBConn[i].getSPDS());
+				}
 			}
 			cfg=null;
+			
+			Enumeration en = htDBConn.keys() ;
+			ArrayList alDBList =  new ArrayList();
+			 while (en.hasMoreElements()){
+				 alDBList.add(en.toString());
+				 en.nextElement();
+			 }
+			String[] newDBList = (String[]) alDBList.toArray(new String [0]);
 			
 			while (true){
 			Configurator c =new Configurator(configFile);
 			Query[] q =c.getOracleQueries();
 			
-			for (int i=0; i<DatabaseList.length ;i++){
+			for (int i=0; i<newDBList.length ;i++){
 				
 				
 				SharedPoolDataSource spds = 
-					(SharedPoolDataSource) htDBConn.get(DatabaseList[i]);
+					(SharedPoolDataSource) htDBConn.get(newDBList[i]);
 				
-				logger.debug("retrieve connection for dbname ->"+DatabaseList[i]);
-				//System.out.println("retrieve connection for dbname ->"+DatabaseList[i]);
+				logger.debug("retrieve connection for dbname ->"+newDBList[i]);
+				//System.out.println("retrieve connection for dbname ->"+newDBList[i]);
 			try {
 				Connection con =spds.getConnection();
-				logger.debug("sharedpooldatasource idle connection -->"+spds.getNumIdle()+" active connetion -->"+spds.getNumActive()+""+" dbname -->"+DatabaseList[i]);
+				logger.debug("sharedpooldatasource idle connection -->"+spds.getNumIdle()+" active connetion -->"+spds.getNumActive()+""+" dbname -->"+newDBList[i]);
 				//System.out.println("sharedpooldatasource idle connection -->"+spds.getNumIdle()+" active connetion -->"+spds.getNumActive()+""+" dbname -->"+DatabaseList[i]);
 				//Item[] zitems = DBEnquiry.execute(queries ,myDBConn );
 				//logger.debug("Item retrieved "+zitems.length);
 				
 				
-				logger.debug("Starting ZabbixTrapper for "+DatabaseList[i]);
-				final Trapper trapper = c.getTrapper(DatabaseList[i]);
+				logger.debug("Starting ZabbixTrapper for "+newDBList[i]);
+				final Trapper trapper = c.getTrapper(newDBList[i]);
 				//final Trapper trapper = cfg.getTrapper("VM6465");
-				Runnable runner = new dbJob(con,q, trapper,DatabaseList[i] );
+				Runnable runner = new dbJob(con,q, trapper,newDBList[i] );
 
 				executor.execute(runner);
 				

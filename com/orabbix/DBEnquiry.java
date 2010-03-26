@@ -51,6 +51,7 @@ public class DBEnquiry {
         	            while(rs.next()){
         	            //	System.out.println(_queries[i].getSQL());
         	            //	System.out.println(_queries[i].getName());
+        	            	System.out.println(rs.getType());
         	            	tempStr=rs.getObject(1).toString().trim();
         	            	while ( rs.next() ) {
         	            		tempStr=tempStr+rs.getObject(1).toString().trim();

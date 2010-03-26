@@ -53,7 +53,7 @@ final class Sender extends Thread {
 
     private boolean stopping = false;
 
-    private static final int TIMEOUT = 5 * 1000;
+    private static final int TIMEOUT = 10 * 1000;
 
     /**
      * Create a new background sender.
