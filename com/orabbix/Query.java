@@ -21,8 +21,9 @@ public class Query {
   
   private String sql;
   private String name;
+  private String nodata;
   
-  public Query( String _query, String _name ) {
+  public Query( String _query, String _name, String _nodata) {
     if( _query == null || _query.length() ==0)
       throw new RuntimeException( "empty query");
     this.sql    = _query;
@@ -30,6 +31,11 @@ public class Query {
       this.name = _name;
     else
       this.name = _query;
+   if ( _nodata != null && _nodata.length() >0 ){
+	   this.nodata=_nodata;   
+   }else 
+	   this.nodata="";
+    
   }
   
   public String getName() {
@@ -39,10 +45,8 @@ public class Query {
     return this.sql;
   }
   
-  
-  public String toString() {
-    StringBuffer sb = new StringBuffer();
-    sb.append( "sql=" ).append( sql ).append( "\n" );
-    return sb.toString();
+  public String getNoData() {
+	return this.nodata;
   }
+
 }

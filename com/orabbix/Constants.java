@@ -23,6 +23,7 @@ public class Constants {
   public static final String QUERY_LIST     	= "QueryList";
   public static final String QUERY_LIST_FILE    = "QueryListFile";
   public static final String QUERY_POSTFIX 		= "query";
+  public static final String QUERY_NO_DATA_FOUND= "NoDataFound";
   public static final String QUERY_URL 			= "Url";
   public static final String QUERY_USERNAME 	= "User";
   public static final String QUERY_PASSWORD 	= "Password";

@@ -82,7 +82,8 @@ public class Configurator {
           for(int i=0; i<QueryLists.length; i++) {
         	Query q = new Query(  
               	      (String) _propsq.getProperty(QueryLists[i]+"."+Constants.QUERY_POSTFIX),
-              	      (String) QueryLists[i]
+              	      (String) QueryLists[i],
+              	      _propsq.getProperty(QueryLists[i]+"."+Constants.QUERY_NO_DATA_FOUND)
               	      );
           	Queries.add( q );
           }	

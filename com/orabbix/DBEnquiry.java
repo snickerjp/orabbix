@@ -27,94 +27,7 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 
 public class DBEnquiry {
-	public static 	Item[] execute(Query[] _queries, DBConn[] _dbConn) throws Exception {
-	    if (_queries == null || _queries.length<1) {
-            throw new IllegalArgumentException("Query's array is empty or null");
-        }
-        if (_dbConn == null||_dbConn.length<1) {
-            throw new IllegalArgumentException("DBConnection is empty or null");
-        }
-        
-        int count;
-        Collection<Item> SZItems = new ArrayList();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement p_stmt = null;
-		for ( count=0; count < _dbConn.length; count++) {
-    	         System.out.println( (1+count) + " db : " + _dbConn[count].getName() );
-    	          con = _dbConn[count].getSPDS().getConnection();
-    	          for (int i=0 ; i< _queries.length ;i++)
-    	          {
-    	        //	System.out.println(queries[i].getSQL());
-    	        //	System.out.println(queries[i].getName());
-    	            p_stmt = con.prepareStatement(_queries[i].getSQL().toString());
-    	            rs = p_stmt.executeQuery();
-    	            String tempStr=new String("");
-        	            while(rs.next()){
-        	            //	System.out.println(_queries[i].getSQL());
-        	            //	System.out.println(_queries[i].getName());
-        	            	tempStr=rs.getObject(1).toString().trim();
-        	            	while ( rs.next() ) {
-        	            		tempStr=tempStr+rs.getObject(1).toString().trim();
-        	            	      }
-        	            //	System.out.println( tempStr.toString());
-        	            }
-        //	            System.out.println("_dbConn[count].getName()"+_dbConn[count].getName()+"_queries[i].getName()"+_queries[i].getName()+"tempStr"+tempStr);
-        	            Item zitem = new Item(_queries[i].getName(),tempStr, _dbConn[count].getName());
-        	            SZItems.add(zitem);
-        	            rs.close() ;
-        	         
-    	          }
-    	          con.close();
-    	      }
-		Item[] items= (Item[]) SZItems.toArray( new Item[0] );
-        return items;        
-	}
-	
-	
-	/*
-	 * NOT USED
-	 * */
-	public static 	Item[] execute(Query[] _queries, DBConn _dbConn) throws Exception {
-	    if (_queries == null || _queries.length<1) {
-            throw new IllegalArgumentException("Query's array is empty or null");
-        }
-        
 
-        Collection SZItems = new ArrayList();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement p_stmt = null;
-        
-    	//System.out.println( " db : " + _dbConn.getName() );
-         con = _dbConn.getSPDS().getConnection();
-         
-    	 for (int i=0 ; i< _queries.length ;i++)
-         {
-       //	System.out.println(queries[i].getSQL());
-    		 
-       //	System.out.println(queries[i].getName());
-           p_stmt = con.prepareStatement(_queries[i].getSQL().toString());
-           rs = p_stmt.executeQuery();
-           String tempStr=new String("");
-	            while(rs.next()){
-	            //	System.out.println(_queries[i].getSQL());
-	            //	System.out.println(_queries[i].getName());
-	            	tempStr=rs.getObject(1).toString().trim();
-	            	while ( rs.next() ) {
-	            		tempStr=tempStr+rs.getObject(1).toString().trim();
-	            	      }
-	            //	System.out.println( tempStr.toString());
-	            }
-	            Item zitem = new Item(_queries[i].getName(),tempStr, _dbConn.getName());
-	            SZItems.add(zitem);
-	            rs.close() ;
-	         
-         }
-    	          con.close();
-    	          Item[] items= (Item[]) SZItems.toArray( new Item[0] );
-    	          return items;        
-	}
 	
 	public static 	Item[] execute(Query[] _queries, Connection _conn) throws Exception {
 	    if (_queries == null || _queries.length<1) {
@@ -148,6 +61,9 @@ public class DBEnquiry {
 	            	      }
 	            //	System.out.println( tempStr.toString());
 	            }
+	            if (tempStr==null || tempStr.length()==0)
+	            	if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null)
+	            	tempStr=_queries[i].getNoData();
 	            Item zitem = new Item(_queries[i].getName(),tempStr);
 	            SZItems.add(zitem);
                 rs.close() ;
