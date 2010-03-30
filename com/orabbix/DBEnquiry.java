@@ -53,19 +53,15 @@ public class DBEnquiry {
            p_stmt = con.prepareStatement(_queries[i].getSQL().toString());
            rs = p_stmt.executeQuery();
            String tempStr=new String("");
-	            while(rs.next()){
+	            ResultSetMetaData rsmd = rs.getMetaData();
+	            	int numColumns = rsmd.getColumnCount(); 
+	            	while(rs.next()){
 	            //	System.out.println(_queries[i].getSQL());
 	            //	System.out.println(_queries[i].getName());
 	            //	tempStr=rs.getObject(1).toString().trim();
-           	
-	            	ResultSetMetaData rsmd = rs.getMetaData();
-	            	int numColumns = rsmd.getColumnCount(); 
-	            	while ( rs.next() ) {
-	            		//tempStr=tempStr+rs.getObject(1).toString().trim();
-	            			for (int r=1; r<numColumns+1; r++) {
-	            				tempStr=tempStr+rs.getObject(r).toString().trim();
-	            				}
-	            	      }
+           			for (int r=1; r<numColumns+1; r++) {
+	        			tempStr=tempStr+rs.getObject(r).toString().trim();
+           	      }
 	            logger.debug("resultset returned from query "+_queries[i].getName()+" resultset -->"+tempStr.toString());
 	            }
 	            if (tempStr==null || tempStr.length()==0){

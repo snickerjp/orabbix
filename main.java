@@ -88,7 +88,9 @@ public class main {
 			 * daemon begin here
 			 */
 			while (true){
-			
+			/**
+			 * istantiate a new configurator
+			 */
 				Configurator c =new Configurator(configFile);
 				String [] dblist = c.getDBList();
 				Query[] q =c.getOracleQueries();
@@ -115,6 +117,7 @@ public class main {
 						String tmp=(String)en.nextElement();
 						if (!htTemp.containsKey(tmp)){
 							logger.error("Database Removed: removing database "+tmp);
+							htDBConn.get(tmp).close();
 							htDBConn.remove(tmp);
 						
 					}
