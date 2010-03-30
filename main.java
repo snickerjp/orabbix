@@ -102,7 +102,28 @@ public class main {
 					}
 					}
 			}
-			
+			/**
+			 * to clean list from removed databases
+			 */
+			if (dblist.length< htDBConn.size()){
+				Hashtable htTemp= new Hashtable();
+				for ( int j=0;j< dblist.length;j++){
+					htTemp.put(dblist[j].toString(), "");
+				}
+					Enumeration en = htDBConn.keys();
+					while (en.hasMoreElements()){
+						String tmp=(String)en.nextElement();
+						if (!htTemp.containsKey(tmp)){
+							logger.error("Database Removed: removing database "+tmp);
+							htDBConn.remove(tmp);
+						
+					}
+					
+				}
+			}
+			/**
+			 * remove null or wrong connection			
+			 */
 			Enumeration en = htDBConn.keys() ;
 			ArrayList alDBList =  new ArrayList();
 			 while (en.hasMoreElements()){
@@ -121,23 +142,12 @@ public class main {
 			try {
 				Connection con =spds.getConnection();
 				logger.debug("sharedpooldatasource idle connection -->"+spds.getNumIdle()+" active connetion -->"+spds.getNumActive()+""+" dbname -->"+newDBList[i]);
-				//System.out.println("sharedpooldatasource idle connection -->"+spds.getNumIdle()+" active connetion -->"+spds.getNumActive()+""+" dbname -->"+DatabaseList[i]);
-				//Item[] zitems = DBEnquiry.execute(queries ,myDBConn );
-				//logger.debug("Item retrieved "+zitems.length);
-				
-				
 				logger.debug("Starting ZabbixTrapper for "+newDBList[i]);
 				final Trapper trapper = c.getTrapper(newDBList[i]);
-				//final Trapper trapper = cfg.getTrapper("VM6465");
+			
 				Runnable runner = new dbJob(con,q, trapper,newDBList[i] );
-
 				executor.execute(runner);
 				
-				//executor.wait();
-				/*for ( int cnt1=0; cnt1 < zitems.length; cnt1++) {
-					trapper.send(zitems[cnt1].getKey(),zitems[cnt1].getValue());
-				}
-				trapper.stop();*/
 			}catch (Exception e){
 				
 				 logger.error("Error while retrieve the connection ->" + e.getMessage());
@@ -152,7 +162,6 @@ public class main {
 			}
 			 
 		 }catch (Exception ex){
-			
 			 ex.printStackTrace();
 		 }
             

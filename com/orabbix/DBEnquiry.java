@@ -21,6 +21,7 @@ package com.orabbix;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -55,11 +56,17 @@ public class DBEnquiry {
 	            while(rs.next()){
 	            //	System.out.println(_queries[i].getSQL());
 	            //	System.out.println(_queries[i].getName());
-	            	tempStr=rs.getObject(1).toString().trim();
+	            //	tempStr=rs.getObject(1).toString().trim();
+           	
+	            	ResultSetMetaData rsmd = rs.getMetaData();
+	            	int numColumns = rsmd.getColumnCount(); 
 	            	while ( rs.next() ) {
-	            		tempStr=tempStr+rs.getObject(1).toString().trim();
+	            		//tempStr=tempStr+rs.getObject(1).toString().trim();
+	            			for (int r=1; r<numColumns+1; r++) {
+	            				tempStr=tempStr+rs.getObject(r).toString().trim();
+	            				}
 	            	      }
-	            //	System.out.println( tempStr.toString());
+	            logger.debug("resultset returned from query "+_queries[i].getName()+" resultset -->"+tempStr.toString());
 	            }
 	            if (tempStr==null || tempStr.length()==0){
 	            	if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null){
