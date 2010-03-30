@@ -26,6 +26,8 @@ import java.util.concurrent.Executors;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.log4j.Logger;
 
+
+
 import com.orabbix.Configurator;
 import com.orabbix.DBConn;
 import com.orabbix.Query;
@@ -58,16 +60,16 @@ public class main {
             Logger logger = Logger.getLogger("Orabbix");
             logger.info("Starting Orabbix.");
             
-            
 			String configFile;
 			configFile= new String(args[0].toString());
 			
 			
 			Configurator cfg =new Configurator(configFile);
 			String [] DatabaseList = cfg.getDBList();
-			
-         	ExecutorService executor = 
-	               Executors.newFixedThreadPool(DatabaseList.length);
+			Integer maxThread=cfg.getMaxThread();
+
+			ExecutorService executor = 
+	               Executors.newFixedThreadPool(maxThread.intValue());
 			DBConn[] myDBConn = cfg.getConnections();
 			
 			Hashtable<String, SharedPoolDataSource> htDBConn = new Hashtable<String, SharedPoolDataSource>();
@@ -77,7 +79,29 @@ public class main {
 				htDBConn.put(myDBConn[i].getName(), myDBConn[i].getSPDS());
 				}
 			}
+			/**
+			 * throw away this config i'm going to use a new one
+			 */
 			cfg=null;
+			
+			/**
+			 * daemon begin here
+			 */
+			while (true){
+			
+				Configurator c =new Configurator(configFile);
+				String [] dblist = c.getDBList();
+				Query[] q =c.getOracleQueries();
+			
+			for (int i=0; i<dblist.length ;i++){
+				if (!htDBConn.containsKey(dblist[i].toString())) {
+					logger.info("New Database Founded: adding database "+dblist[i].toString());
+					DBConn newDBConn = c.getConnection(dblist[i].toString());
+					if (newDBConn!=null){
+						htDBConn.put(newDBConn.getName(), newDBConn.getSPDS());
+					}
+					}
+			}
 			
 			Enumeration en = htDBConn.keys() ;
 			ArrayList alDBList =  new ArrayList();
@@ -85,10 +109,6 @@ public class main {
 				 alDBList.add((String)en.nextElement());
 			 }
 			String[] newDBList = (String[]) alDBList.toArray(new String [0]);
-			
-			while (true){
-			Configurator c =new Configurator(configFile);
-			Query[] q =c.getOracleQueries();
 			
 			for (int i=0; i<newDBList.length ;i++){
 				

@@ -33,5 +33,6 @@ public class Constants {
   public static final String ZABBIX_SERVER_PORT     	= "ZabbixServer.Port";
   public static final String ZABBIX_SERVER_HOST     	= "ZabbixServer.Address";
   public static final String ZABBIX_DAEMON_SLEEP     	= "ZabbixDaemon.Sleep";
+  public static final String ZABBIX_DAEMON_THREAD     	= "ZabbixDaemon.MaxThreadNumber";
   public static final int ZABBIX_SERVER_DEFAULT_PORT 			= 10051;
 }

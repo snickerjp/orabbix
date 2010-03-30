@@ -56,7 +56,6 @@ public class Configurator {
 			// TODO Auto-generated catch block
 			Logger logger = Logger.getLogger("Orabbix");
    	        logger.error("Error on Configurator  "+e.getMessage());
-			e.printStackTrace();
 		}
     }
 	
@@ -96,7 +95,7 @@ public class Configurator {
     	}
         
     }
-
+	
 	
 	
 	public static  DBConn getConnection(String dbName) throws Exception {
@@ -196,16 +195,30 @@ public class Configurator {
 			verifyConfig();
 			return new ZabbixTrapper(_props.getProperty(Constants.ZABBIX_SERVER_HOST), _host);
 		} catch (Exception ex){
-			ex.printStackTrace();
+			Logger logger = Logger.getLogger("Orabbix");
+			logger.error("Error on Configurator while retriving "+Constants.ZABBIX_SERVER_HOST+" "+ex.getMessage());
 			return null;
 		}
 	}
+	
+	public Integer getMaxThread() throws Exception {
+		try{
+			verifyConfig();
+			return new Integer(_props.getProperty(Constants.ZABBIX_DAEMON_THREAD));
+		} catch (Exception ex){
+			Logger logger = Logger.getLogger("Orabbix");
+			logger.error("Error on Configurator while retriving the "+Constants.ZABBIX_DAEMON_THREAD+" "+ex.getMessage());
+			return null;
+		}
+	}
+	
 	public static Integer  getSleep() throws Exception {
 		try{
 			verifyConfig();
 			return new Integer(_props.getProperty(Constants.ZABBIX_DAEMON_SLEEP));
 		} catch (Exception ex){
-			ex.printStackTrace();
+			Logger logger = Logger.getLogger("Orabbix");
+			logger.error("Error on Configurator while retriving "+Constants.ZABBIX_DAEMON_SLEEP+" "+ex.getMessage());
 			return null;
 		}
 	}
