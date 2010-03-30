@@ -80,7 +80,7 @@ public class main {
 				}
 			}
 			/**
-			 * throw away this config i'm going to use a new one
+			 * 
 			 */
 			cfg=null;
 			
