@@ -131,12 +131,17 @@ public class Configurator {
             	logger.info("Connected as "+rs.getString("SYS_CONTEXT('USERENV','SESSION_USER')"));
             	//System.out.println("Connected as "+rs.getString("SYS_CONTEXT('USERENV','SESSION_USER')"));
             }
+            con.close();
+            con = null;
+            con = tds.getConnection();
             p_stmt = con.prepareStatement("SELECT SYS_CONTEXT ('USERENV', 'DB_NAME') FROM DUAL");
             rs = p_stmt.executeQuery();
             while(rs.next()){
             	logger.info("--------- on Database -> "+rs.getString("SYS_CONTEXT('USERENV','DB_NAME')"));
             	//System.out.println("--------- on Database -> "+rs.getString("SYS_CONTEXT('USERENV','DB_NAME')"));
             }
+            con.close();
+            con = null;
             DBConn mydbconn = new DBConn(tds , dbName.toString());
     	    return mydbconn;
     	    
