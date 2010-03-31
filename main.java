@@ -97,7 +97,7 @@ public class main {
 			
 			for (int i=0; i<dblist.length ;i++){
 				if (!htDBConn.containsKey(dblist[i].toString())) {
-					logger.info("New Database Founded: adding database "+dblist[i].toString());
+					logger.warn("New Database Founded: adding database "+dblist[i].toString());
 					DBConn newDBConn = c.getConnection(dblist[i].toString());
 					if (newDBConn!=null){
 						htDBConn.put(newDBConn.getName(), newDBConn.getSPDS());
@@ -116,7 +116,7 @@ public class main {
 					while (en.hasMoreElements()){
 						String tmp=(String)en.nextElement();
 						if (!htTemp.containsKey(tmp)){
-							logger.error("Database Removed: removing database "+tmp);
+							logger.warn("Database Removed: removing database "+tmp);
 							htDBConn.get(tmp).close();
 							htDBConn.remove(tmp);
 						
