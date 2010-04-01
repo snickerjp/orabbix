@@ -42,9 +42,11 @@ final class Sender extends Thread {
     private final InetAddress zabbixServer;
 
     private final int zabbixPort;
-
+    
     private final String head;
-
+    
+    private final String host;
+    
     private static final String middle = "</key><data>";
 
     private static final String tail = "</data></req>";
@@ -77,7 +79,7 @@ final class Sender extends Thread {
 
         this.zabbixServer = zabbixServer;
         this.zabbixPort = zabbixPort;
-
+        this.host = host;
         this.head = "<req><host>" + Base64.encode(host) + "</host><key>";
     }
 
@@ -97,8 +99,11 @@ final class Sender extends Thread {
         while (!stopping) {
             try {
                 final Item item = queue.take();
-
-                send(item.getKey(), item.getValue());
+                try{
+                	send(item.getKey(), item.getValue());
+                	}catch (Exception e){
+                		log.warn("Error while sending "+item.getKey()+" value "+item.getValue()+" on host "+host+" error:"+ e.getMessage());
+                	}
             } catch (InterruptedException e) {
                 if (!stopping) {
                     log.warn("ignoring exception", e);

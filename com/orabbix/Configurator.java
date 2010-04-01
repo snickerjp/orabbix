@@ -195,7 +195,7 @@ public class Configurator {
 	}
 	
 	
-	public static Trapper  getTrapper(String _host) throws Exception {
+	public ZabbixTrapper  getTrapper(String _host) throws Exception {
 		try{
 			verifyConfig();
 			return new ZabbixTrapper(_props.getProperty(Constants.ZABBIX_SERVER_HOST), _host);

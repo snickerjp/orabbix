@@ -32,6 +32,7 @@ import com.orabbix.Configurator;
 import com.orabbix.DBConn;
 import com.orabbix.Query;
 import com.orabbix.Trapper;
+import com.orabbix.ZabbixTrapper;
 import com.orabbix.dbJob;
 
 
@@ -146,8 +147,7 @@ public class main {
 				Connection con =spds.getConnection();
 				logger.debug("sharedpooldatasource idle connection -->"+spds.getNumIdle()+" active connetion -->"+spds.getNumActive()+""+" dbname -->"+newDBList[i]);
 				logger.debug("Starting ZabbixTrapper for "+newDBList[i]);
-				final Trapper trapper = c.getTrapper(newDBList[i]);
-			
+				final ZabbixTrapper trapper = c.getTrapper(newDBList[i]);
 				Runnable runner = new dbJob(con,q, trapper,newDBList[i] );
 				executor.execute(runner);
 				
