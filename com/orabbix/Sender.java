@@ -55,7 +55,9 @@ final class Sender extends Thread {
 
     private boolean stopping = false;
 
-    private static final int TIMEOUT = 10 * 1000;
+    private static final int retryNumber = 10; 
+    
+    private static final int TIMEOUT = 30 * 1000;
 
     /**
      * Create a new background sender.
@@ -68,6 +70,7 @@ final class Sender extends Thread {
      *            The port number on that machine.
      * @param host
      *            The host name, as defined in the host definition in Zabbix.
+     *   
      */
     public Sender(final BlockingQueue<Item> queue,
             final InetAddress zabbixServer, final int zabbixPort,
@@ -99,15 +102,26 @@ final class Sender extends Thread {
         while (!stopping) {
             try {
                 final Item item = queue.take();
-                try{
-                	send(item.getKey(), item.getValue());
-                	}catch (Exception e){
-                		log.warn("Error while sending "+item.getKey()+" value "+item.getValue()+" on host "+host+" error:"+ e.getMessage());
-                	}
+                int retryCount = 0;
+                while (retryCount<= retryNumber){
+	                try{
+	                	send(item.getKey(), item.getValue());
+	                	break;
+	                	}catch (Exception e){
+	                		log.warn("Warning while sending item "+item.getKey()+" value "+item.getValue()+" on host "+host+" retry number "+retryCount+" error:"+ e);
+	                		Thread.sleep(1000);
+	                		retryCount++;
+	                		continue ;
+	                	}
+                }
+                if (retryCount==retryNumber){
+                	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount+1);
+                }         
             } catch (InterruptedException e) {
                 if (!stopping) {
                     log.warn("ignoring exception", e);
                 }
+                       
             } catch (Exception e) {
                 log.warn("ignoring exception", e);
             }
@@ -116,10 +130,20 @@ final class Sender extends Thread {
         // drain the queue
         while (queue.size() > 0) {
             final Item item = queue.remove();
-            try {
-                send(item.getKey(), item.getValue());
-            } catch (Exception e) {
-                log.warn("ignoring exception", e);
+            int retryCount = 0;
+            while (retryCount<= retryNumber){
+            	try {
+            		send(item.getKey(), item.getValue());
+            		break;
+            	} catch (Exception e) {
+            		log.warn("Warning while sending item "+item.getKey()+"  on host "+host+" retry number "+retryCount+1+" error:"+ e);
+            		retryCount++;
+            		continue;
+            		}
+           	
+            }
+            if (retryCount==retryNumber){
+            	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount+1);
             }
         }
     }
@@ -143,6 +167,7 @@ final class Sender extends Thread {
         try {
             zabbix = new Socket(zabbixServer, zabbixPort);
             zabbix.setSoTimeout(TIMEOUT);
+            
 
             out = new OutputStreamWriter(zabbix.getOutputStream());
             out.write(message.toString());
