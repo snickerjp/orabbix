@@ -153,7 +153,7 @@ public class main {
 				
 			}catch (Exception e){
 				
-				 logger.error("Error while retrieve the connection ->" + e.getMessage());
+				 logger.error("Error in main while retrieve the connection for database "+ newDBList[i] +" error:  " + e.getMessage());
 			}
 			}
 			
