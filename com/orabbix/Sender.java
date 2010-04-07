@@ -115,7 +115,7 @@ final class Sender extends Thread {
 	                	}
                 }
                 if (retryCount==retryNumber){
-                	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount);
+                	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount +" times");
                 }         
             } catch (InterruptedException e) {
                 if (!stopping) {

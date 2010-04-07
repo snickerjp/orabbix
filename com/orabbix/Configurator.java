@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.StringTokenizer;
-
 import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.log4j.Level;
@@ -58,7 +57,7 @@ public class Configurator {
 		}
     }
 	
-	private static  void verifyConfig(){
+	private  void verifyConfig(){
 		if (_props == null || _propsq == null){
 			 throw new IllegalArgumentException("empty properties");
 		}
@@ -97,7 +96,7 @@ public class Configurator {
 	
 	
 	
-	public static  DBConn getConnection(String dbName) throws Exception {
+	public   DBConn getConnection(String dbName) throws Exception {
 		try{
 			verifyConfig();
 		 Logger logger = Logger.getLogger("Orabbix");

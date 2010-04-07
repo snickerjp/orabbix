@@ -29,11 +29,7 @@ import org.apache.log4j.Logger;
 
 
 
-import com.orabbix.Configurator;
-import com.orabbix.DBConn;
-import com.orabbix.Query;
-import com.orabbix.ZabbixTrapper;
-import com.orabbix.dbJob;
+import com.orabbix.*;
 
 
 
@@ -73,7 +69,9 @@ public class main {
 
 			ExecutorService executor = 
 	               Executors.newFixedThreadPool(maxThread.intValue());
+			
 			DBConn[] myDBConn = cfg.getConnections();
+			
 			
 			Hashtable<String, SharedPoolDataSource> htDBConn = new Hashtable<String, SharedPoolDataSource>();
 			
