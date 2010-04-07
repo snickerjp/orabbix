@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 
@@ -31,7 +32,6 @@ import org.apache.log4j.Logger;
 import com.orabbix.Configurator;
 import com.orabbix.DBConn;
 import com.orabbix.Query;
-import com.orabbix.Trapper;
 import com.orabbix.ZabbixTrapper;
 import com.orabbix.dbJob;
 
@@ -59,14 +59,16 @@ public class main {
 			    System.exit(0);
 			}
             Logger logger = Logger.getLogger("Orabbix");
-            logger.info("Starting Orabbix.");
+            Level tmpLogLevel = logger.getLevel();
+        	logger.setLevel(Level.INFO);
+            logger.info("Starting Orabbix Version 0.5");
+            logger.setLevel(tmpLogLevel);
             
 			String configFile;
 			configFile= new String(args[0].toString());
 			
 			
 			Configurator cfg =new Configurator(configFile);
-			String [] DatabaseList = cfg.getDBList();
 			Integer maxThread=cfg.getMaxThread();
 
 			ExecutorService executor = 
@@ -129,7 +131,7 @@ public class main {
 			 * remove null or wrong connection			
 			 */
 			Enumeration en = htDBConn.keys() ;
-			ArrayList alDBList =  new ArrayList();
+			ArrayList<String> alDBList =  new ArrayList();
 			 while (en.hasMoreElements()){
 				 alDBList.add((String)en.nextElement());
 			 }
@@ -157,9 +159,9 @@ public class main {
 			}
 			}
 			
-			logger.debug("going in bed...and sleep for "+c.getSleep()*1000+ " ms");
+			logger.debug("going in bed...and sleep for "+Configurator.getSleep()*1000+ " ms");
 			//System.out.println("going in bed...and sleep for "+c.getSleep()*1000/60000+ " m");
-			Thread.sleep(c.getSleep()*1000);
+			Thread.sleep(Configurator.getSleep()*1000);
 			logger.debug("waking up Goood Morning");
 			
 			}

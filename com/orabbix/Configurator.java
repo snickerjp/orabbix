@@ -24,14 +24,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 
@@ -128,7 +127,10 @@ public class Configurator {
             ResultSet rs = null;
             rs = p_stmt.executeQuery();
             while(rs.next()){
+            	Level tmpLogLevel = logger.getLevel();
+            	logger.setLevel(Level.INFO);
             	logger.info("Connected as "+rs.getString("SYS_CONTEXT('USERENV','SESSION_USER')"));
+            	logger.setLevel(tmpLogLevel);
             	//System.out.println("Connected as "+rs.getString("SYS_CONTEXT('USERENV','SESSION_USER')"));
             }
             con.close();
@@ -137,7 +139,10 @@ public class Configurator {
             p_stmt = con.prepareStatement("SELECT SYS_CONTEXT ('USERENV', 'DB_NAME') FROM DUAL");
             rs = p_stmt.executeQuery();
             while(rs.next()){
+            	Level tmpLogLevel = logger.getLevel();
+            	logger.setLevel(Level.INFO);
             	logger.info("--------- on Database -> "+rs.getString("SYS_CONTEXT('USERENV','DB_NAME')"));
+            	logger.setLevel(tmpLogLevel);
             	//System.out.println("--------- on Database -> "+rs.getString("SYS_CONTEXT('USERENV','DB_NAME')"));
             }
             con.close();
@@ -159,7 +164,7 @@ public class Configurator {
 	  Logger logger = Logger.getLogger("Orabbix");
       logger.debug("Starting configurator...");
       String [] DatabaseList = getDBList();
-        	Collection<DBConn> connections = new ArrayList();
+        	Collection<DBConn> connections = new ArrayList<DBConn>();
         for(int i=0; i<DatabaseList.length; i++) {
         	connections.add(Configurator.getConnection(DatabaseList[i]));
         }
@@ -168,7 +173,7 @@ public class Configurator {
         return connArray;
 		} catch (Exception ex){
 			Logger logger = Logger.getLogger("Orabbix");
-		    logger.error("Error on Configurator getConnections "+ex.getMessage());
+		    logger.error("Error on Configurator getConnections "+ex);
 			return null;
 		}
     }
@@ -189,7 +194,7 @@ public class Configurator {
         return DatabaseList;
 	} catch (Exception ex){
 		Logger logger = Logger.getLogger("Orabbix");
-	    logger.error("Error on Configurator while retriving the databases list "+Constants.DATABASES_LIST+" "+ex.getMessage());
+	    logger.error("Error on Configurator while retriving the databases list "+Constants.DATABASES_LIST+" "+ex);
 		return null;
 	}
 	}
@@ -201,7 +206,7 @@ public class Configurator {
 			return new ZabbixTrapper(_props.getProperty(Constants.ZABBIX_SERVER_HOST), _host);
 		} catch (Exception ex){
 			Logger logger = Logger.getLogger("Orabbix");
-			logger.error("Error on Configurator while retriving "+Constants.ZABBIX_SERVER_HOST+" "+ex.getMessage());
+			logger.error("Error on Configurator while retriving "+Constants.ZABBIX_SERVER_HOST+" "+ex);
 			return null;
 		}
 	}
@@ -212,7 +217,7 @@ public class Configurator {
 			return new Integer(_props.getProperty(Constants.ZABBIX_DAEMON_THREAD));
 		} catch (Exception ex){
 			Logger logger = Logger.getLogger("Orabbix");
-			logger.error("Error on Configurator while retriving the "+Constants.ZABBIX_DAEMON_THREAD+" "+ex.getMessage());
+			logger.error("Error on Configurator while retriving the "+Constants.ZABBIX_DAEMON_THREAD+" "+ex);
 			return null;
 		}
 	}
@@ -223,7 +228,7 @@ public class Configurator {
 			return new Integer(_props.getProperty(Constants.ZABBIX_DAEMON_SLEEP));
 		} catch (Exception ex){
 			Logger logger = Logger.getLogger("Orabbix");
-			logger.error("Error on Configurator while retriving "+Constants.ZABBIX_DAEMON_SLEEP+" "+ex.getMessage());
+			logger.error("Error on Configurator while retriving "+Constants.ZABBIX_DAEMON_SLEEP+" "+ex);
 			return null;
 		}
 	}

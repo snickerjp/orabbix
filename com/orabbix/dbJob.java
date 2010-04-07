@@ -1,8 +1,6 @@
 package com.orabbix;
 
 import java.sql.Connection;
-import java.util.concurrent.BlockingQueue;
-
 import org.apache.log4j.Logger;
 
 public class dbJob  implements Runnable {
@@ -38,14 +36,14 @@ public class dbJob  implements Runnable {
 			_dbConn.close();
       } catch (Exception e) {
 		// TODO Auto-generated catch block
-		    logger.error("Error on dbJob for database "+_dbname+" "+e.getMessage());
+		    logger.error("Error on dbJob for database "+_dbname+" "+e);
 	  	}finally {
     	  if (_dbConn != null)
 			try {
 				_dbConn.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-			     logger.error("Error on dbJob for database "+_dbname+" "+e.getMessage());
+			     logger.error("Error on dbJob for database "+_dbname+" "+e);
 			}
     	  if (_queries != null)
     		  _queries=null;

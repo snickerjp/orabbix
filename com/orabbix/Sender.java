@@ -115,7 +115,7 @@ final class Sender extends Thread {
 	                	}
                 }
                 if (retryCount==retryNumber){
-                	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount+1);
+                	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount);
                 }         
             } catch (InterruptedException e) {
                 if (!stopping) {
@@ -149,8 +149,6 @@ final class Sender extends Thread {
     }
 
     private void send(final String key, final String value) throws IOException {
-        final long start = System.currentTimeMillis();
-
         final StringBuilder message = new StringBuilder(head);
         message.append(Base64.encode(key));
         message.append(middle);
@@ -193,6 +191,5 @@ final class Sender extends Thread {
                 zabbix.close();
             }
         }
-        //log.info("send() " + (System.currentTimeMillis() - start) + " ms");
     }
 }

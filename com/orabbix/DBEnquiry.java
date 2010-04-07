@@ -35,7 +35,7 @@ public class DBEnquiry {
             throw new IllegalArgumentException("Query's array is empty or null");
         }
         Connection con=_conn;
-        Collection<Item> SZItems = new ArrayList();
+        Collection<Item> SZItems = new ArrayList<Item>();
          ResultSet rs = null;
         PreparedStatement p_stmt = null;
         
