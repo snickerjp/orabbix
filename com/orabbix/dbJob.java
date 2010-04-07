@@ -8,8 +8,7 @@ public class dbJob  implements Runnable {
     private Query[] _queries;
     private final ZabbixTrapper _trapper;
     private final String _dbname;
-    
-	
+    	
     public dbJob(Connection dbConn, Query[] queries, ZabbixTrapper trapper,String dbname) {
       this._dbConn = dbConn;
       this._queries = queries;

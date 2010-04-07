@@ -57,7 +57,7 @@ public class Configurator {
 		}
     }
 	
-	private  void verifyConfig(){
+	private static  void verifyConfig(){
 		if (_props == null || _propsq == null){
 			 throw new IllegalArgumentException("empty properties");
 		}
@@ -96,7 +96,7 @@ public class Configurator {
 	
 	
 	
-	public   DBConn getConnection(String dbName) throws Exception {
+	public  DBConn getConnection(String dbName) throws Exception {
 		try{
 			verifyConfig();
 		 Logger logger = Logger.getLogger("Orabbix");
@@ -165,7 +165,7 @@ public class Configurator {
       String [] DatabaseList = getDBList();
         	Collection<DBConn> connections = new ArrayList<DBConn>();
         for(int i=0; i<DatabaseList.length; i++) {
-        	connections.add(Configurator.getConnection(DatabaseList[i]));
+        	connections.add(this.getConnection(DatabaseList[i]));
         }
         //fis.close();
     	DBConn[] connArray  = (DBConn[]) connections.toArray( new DBConn[0] );

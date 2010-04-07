@@ -26,9 +26,6 @@ import java.util.concurrent.Executors;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-
-
 import com.orabbix.*;
 
 
@@ -109,7 +106,7 @@ public class main {
 			 * to clean list from removed databases
 			 */
 			if (dblist.length< htDBConn.size()){
-				Hashtable htTemp= new Hashtable();
+				Hashtable<String, String> htTemp= new Hashtable();
 				for ( int j=0;j< dblist.length;j++){
 					htTemp.put(dblist[j].toString(), "");
 				}
@@ -129,7 +126,7 @@ public class main {
 			 * remove null or wrong connection			
 			 */
 			Enumeration en = htDBConn.keys() ;
-			ArrayList<String> alDBList =  new ArrayList();
+			ArrayList<String> alDBList =  new ArrayList<String>();
 			 while (en.hasMoreElements()){
 				 alDBList.add((String)en.nextElement());
 			 }

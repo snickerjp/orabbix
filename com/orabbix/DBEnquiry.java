@@ -28,8 +28,6 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 
 public class DBEnquiry {
-
-	
 	public static 	Item[] execute(Query[] _queries, Connection _conn) throws Exception {
 	    if (_queries == null || _queries.length<1) {
             throw new IllegalArgumentException("Query's array is empty or null");
