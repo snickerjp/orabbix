@@ -16,7 +16,7 @@
 */
 
 
-package com.orabbix;
+package com.smartmarmot.orabbix;
 
 
 

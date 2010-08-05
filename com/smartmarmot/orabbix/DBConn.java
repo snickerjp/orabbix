@@ -15,38 +15,32 @@
 * orabbix. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.orabbix;
 
-public class Query {
+package com.smartmarmot.orabbix;
+
+
+import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
+
+public class DBConn{
+  private SharedPoolDataSource spds;
+  private String dbaname;
   
-  private String sql;
-  private String name;
-  private String nodata;
-  
-  public Query( String _query, String _name, String _nodata) {
-    if( _query == null || _query.length() ==0)
-      throw new RuntimeException( "empty query");
-    this.sql    = _query;
+  public DBConn( SharedPoolDataSource _spds , String _name ) {
+    if( _spds == null )
+      throw new RuntimeException( "empty datasource");
+    this.spds    = _spds;
     if ( _name != null && _name.length() >0 )
-      this.name = _name;
+      this.dbaname = _name;
     else
-      this.name = _query;
-   if ( _nodata != null && _nodata.length() >0 ){
-	   this.nodata=_nodata;   
-   }else 
-	   this.nodata="";
-    
+      this.dbaname = "undefined";
   }
   
   public String getName() {
-    return this.name;
+    return this.dbaname;
   }
-  public String getSQL() {
-    return this.sql;
+  public SharedPoolDataSource getSPDS() {
+    return this.spds;
   }
   
-  public String getNoData() {
-	return this.nodata;
-  }
 
 }

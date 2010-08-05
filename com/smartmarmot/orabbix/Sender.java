@@ -1,4 +1,4 @@
-package com.orabbix;
+package com.smartmarmot.orabbix;
 
 
 
@@ -21,8 +21,9 @@ package com.orabbix;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.log4j.Logger;
@@ -32,16 +33,17 @@ import com.Ostermiller.util.Base64;
 /**
  * A daemon thread that waits for and forwards data items to a Zabbix server.
  * 
- * @author Kees Jan Koster &lt;kjkoster@kjkoster.org&gt;
+ * @author Kees Jan Koster Completely modified by
+ * 		   Andrea Dalle Vacche
  */
-final class Sender extends Thread {
+public final class Sender implements Runnable {
     private static final Logger log = Logger.getLogger("Orabbix");
 
     private final BlockingQueue<Item> queue;
 
-    private final InetAddress zabbixServer;
+    private final Hashtable <String , Integer >  zabbixServers;
 
-    private final int zabbixPort;
+    
     
     private final String head;
     
@@ -73,15 +75,14 @@ final class Sender extends Thread {
      *   
      */
     public Sender(final BlockingQueue<Item> queue,
-            final InetAddress zabbixServer, final int zabbixPort,
+    		Hashtable <String , Integer > ZabbixServers,
+            
             final String host) {
-        super("Zabbix-sender");
+      /*  super("Zabbix-sender");
         setDaemon(true);
-
+*/
         this.queue = queue;
-
-        this.zabbixServer = zabbixServer;
-        this.zabbixPort = zabbixPort;
+        this.zabbixServers = ZabbixServers;
         this.host = host;
         this.head = "<req><host>" + Base64.encode(host) + "</host><key>";
     }
@@ -91,7 +92,7 @@ final class Sender extends Thread {
      */
     public void stopping() {
         stopping = true;
-        interrupt();
+        /*interrupt();*/
     }
 
     /**
@@ -99,10 +100,10 @@ final class Sender extends Thread {
      */
     @Override
     public void run() {
-        while (!stopping) {
             try {
                 final Item item = queue.take();
                 int retryCount = 0;
+                trysend1:
                 while (retryCount<= retryNumber){
 	                try{
 	                	send(item.getKey(), item.getValue());
@@ -111,9 +112,9 @@ final class Sender extends Thread {
 	                		log.warn("Warning while sending item "+item.getKey()+" value "+item.getValue()+" on host "+host+" retry number "+retryCount+" error:"+ e);
 	                		Thread.sleep(1000);
 	                		retryCount++;
-	                		continue ;
+	                		continue trysend1;
 	                	}
-                }
+               }
                 if (retryCount==retryNumber){
                 	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount +" times");
                 }         
@@ -125,25 +126,26 @@ final class Sender extends Thread {
             } catch (Exception e) {
                 log.warn("ignoring exception", e);
             }
-        }
+
 
         // drain the queue
         while (queue.size() > 0) {
             final Item item = queue.remove();
             int retryCount = 0;
+            trysend2:
             while (retryCount<= retryNumber){
             	try {
             		send(item.getKey(), item.getValue());
             		break;
             	} catch (Exception e) {
-            		log.warn("Warning while sending item "+item.getKey()+"  on host "+host+" retry number "+retryCount+1+" error:"+ e);
+            		log.warn("Warning while sending item "+item.getKey()+"  on host "+host+" retry number "+retryCount+" error:"+ e);
             		retryCount++;
-            		continue;
+            		continue trysend2;
             		}
            	
             }
             if (retryCount==retryNumber){
-            	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount+1);
+            	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount);
             }
         }
     }
@@ -155,41 +157,48 @@ final class Sender extends Thread {
         message.append(Base64.encode(value == null ? "" : value));
         message.append(tail);
 
-        if (log.isDebugEnabled()) {
+        /*if (log.isDebugEnabled()) {
             log.debug("sending " + message);
-        }
+        }*/
 
         Socket zabbix = null;
         OutputStreamWriter out = null;
         InputStream in = null;
-        try {
-            zabbix = new Socket(zabbixServer, zabbixPort);
-            zabbix.setSoTimeout(TIMEOUT);
-            
+        Enumeration<String> serverlist  = zabbixServers.keys();
 
-            out = new OutputStreamWriter(zabbix.getOutputStream());
-            out.write(message.toString());
-            out.flush();
-
-            in = zabbix.getInputStream();
-            final int read = in.read(response);
-            if (log.isDebugEnabled()) {
-                log.debug("received " + new String(response));
-            }
-            if (read != 2 || response[0] != 'O' || response[1] != 'K') {
-                log.warn("received unexpected response '"
-                        + new String(response) + "' for key '" + key + "'");
-            }
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
-            }
-            if (zabbix != null) {
-                zabbix.close();
-            }
+        while (serverlist.hasMoreElements()){
+        	String zabbixServer = serverlist.nextElement();
+	        try {
+	            zabbix = new Socket(zabbixServer, zabbixServers.get(zabbixServer).intValue());
+	            zabbix.setSoTimeout(TIMEOUT);
+	            
+	
+	            out = new OutputStreamWriter(zabbix.getOutputStream());
+	            out.write(message.toString());
+	            out.flush();
+	
+	            in = zabbix.getInputStream();
+	            final int read = in.read(response);
+	            /*if (log.isDebugEnabled()) {
+	                log.debug("received " + new String(response));
+	            }*/
+	            if (read != 2 || response[0] != 'O' || response[1] != 'K') {
+	                log.warn("received unexpected response '"
+	                        + new String(response) + "' for key '" + key + "'");
+	            }
+	        } catch (Exception ex){
+	        	log.error("Error contacting Zabbix server "+zabbixServer+"  on port "+ zabbixServers.get(zabbixServer));
+	        } finally {
+	            if (in != null) {
+	                in.close();
+	            }
+	            if (out != null) {
+	                out.close();
+	            }
+	            if (zabbix != null) {
+	                zabbix.close();
+	            }
+	        }
         }
     }
 }
