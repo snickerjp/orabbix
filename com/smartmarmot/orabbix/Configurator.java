@@ -376,6 +376,26 @@ public class Configurator {
 			return null;
 		}
 	}
-  
+
+	public String getPidFile() throws Exception {
+		try{
+			verifyConfig();
+			String _pidfile= new String(_props.getProperty(Constants.ORABBIX_PIDFILE));
+			logThis(Level.INFO,"PidFile -> "+_pidfile);
+			
+			if (_pidfile == null ) {
+				logThis(Level.ERROR,"Error null pidfile from "+_props);
+			}
+			if (_pidfile == "") {
+				logThis(Level.ERROR,"Error retrieving pidfile from "+_props);
+			}
+			return _pidfile;
+			
+	} catch (Exception ex){
+		
+		logThis(Level.ERROR,"Error on Configurator getPidFile "+ex);
+		return null;
+	}
+	}  
 
 }

@@ -112,12 +112,13 @@ public final class Sender implements Runnable {
 	                		log.warn("Warning while sending item "+item.getKey()+" value "+item.getValue()+" on host "+host+" retry number "+retryCount+" error:"+ e);
 	                		Thread.sleep(1000);
 	                		retryCount++;
+	                		if (retryCount==retryNumber){
+	                        	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount +" times");
+	                        }         
 	                		continue trysend1;
 	                	}
                }
-                if (retryCount==retryNumber){
-                	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount +" times");
-                }         
+                
             } catch (InterruptedException e) {
                 if (!stopping) {
                     log.warn("ignoring exception", e);

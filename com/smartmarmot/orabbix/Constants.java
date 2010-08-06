@@ -50,6 +50,8 @@ public class Constants {
 	public static final String ZABBIX_SERVER_LIST	    	= "ZabbixServerList";
 	public static final String ZABBIX_SERVER_PORT     	= "Port";
 	public static final String ZABBIX_SERVER_HOST     	= "Address";
+	public static final String ORABBIX_PIDFILE			= "OrabbixDaemon.PidFile";
+	//public static final String POSTBIX_PIDFILE			= "PostbixDaemon.PidFile";
 	public static final String ORABBIX_DAEMON_SLEEP     	= "OrabbixDaemon.Sleep";
 	//public static final String POSTBIX_DAEMON_SLEEP     	= "PostbixDaemon.Sleep";
 	public static final String ORABBIX_DAEMON_THREAD     	= "OrabbixDaemon.MaxThreadNumber";

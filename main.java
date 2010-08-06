@@ -14,6 +14,8 @@
  * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
  
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,6 +39,7 @@ import com.smartmarmot.orabbix.DBJob;
 import com.smartmarmot.orabbix.Item;
 import com.smartmarmot.orabbix.Query;
 import com.smartmarmot.orabbix.Sender;
+import com.smartmarmot.orabbix.Utility;
 
 
 
@@ -74,6 +77,19 @@ public class main {
 
 			ExecutorService executor = 
 	               Executors.newFixedThreadPool(maxThread.intValue());
+			
+			RuntimeMXBean rmxb = ManagementFactory.getRuntimeMXBean();
+			String pid=rmxb.getName();
+			Configurator.logThis(Level.ALL,"Orabbix started with pid:"+pid.split("@")[0].toString());
+			
+		//	System.out.print("pid: "+pid.split("@")[0].toString());
+		
+			String pidfile=cfg.getPidFile();
+			try {
+				Utility.writePid(pid.split("@")[0].toString(), pidfile);
+			}catch (Exception e){
+				Configurator.logThis(Level.ERROR,"Error while trying to write pidfile "+e);
+			}
 			
 			DBConn[] myDBConn = cfg.getConnections();
 			
