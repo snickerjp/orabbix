@@ -30,8 +30,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import com.smartmarmot.orabbix.Configurator;
 import com.smartmarmot.orabbix.Constants;
 import com.smartmarmot.orabbix.DBConn;
@@ -44,7 +42,7 @@ import com.smartmarmot.orabbix.Utility;
 
 
 public class main {
-	public static final String Version="Version 0.9.4";
+	public static final String Version="Version 0.1.0";
 	public static final String Banner =Constants.PROJECT_NAME+" "+Version; 
 	public static void printUsage()
     {
@@ -98,7 +96,7 @@ public class main {
 			
 			for (int i=0; i<myDBConn.length ;i++){
 				if (myDBConn[i]!=null){
-				htDBConn.put(myDBConn[i].getName(), myDBConn[i].getSPDS());
+					htDBConn.put(myDBConn[i].getName(), myDBConn[i].getSPDS());
 				}
 			}
 			/**
@@ -179,9 +177,6 @@ public class main {
 					   _queue.offer(new Item("alive", "1"));
 					   Sender sender = new Sender(_queue,zabbixServers, myDBConn[i].getName());
 				       sender.run();
-				       /*Postman postman = new Postman(InetAddress.getByName(zabbixServer), zabbixPort,myDBConn[i].getName());
-				       postman.addEnvelope("alive", "1");
-				 	   postman.send();*/
 					   alive=true;
 					   Configurator.logThis(Level.DEBUG,"Database "+myDBConn[i].getName()+" is alive");
 					}catch (Exception ex){
@@ -189,9 +184,6 @@ public class main {
 						   _queue.offer(new Item("alive", "0"));
 						   Sender sender = new Sender(_queue,zabbixServers, myDBConn[i].getName());
 					       sender.run();
-					       /*Postman postman = new Postman(InetAddress.getByName(zabbixServer), zabbixPort,myDBConn[i].getName());
-				           postman.addEnvelope("alive", "1");
-				     	   postman.send();*/
 					       Configurator.logThis(Level.ERROR,"Error diuring alive testing for dbname ->"+myDBConn[i].getName()+ex);
 					}
 					
