@@ -28,7 +28,7 @@ import java.util.Collection;
 import org.apache.log4j.Level;
 
 public class DBEnquiry {
-	public static 	Item[] execute(Query[] _queries, Connection _conn) throws Exception {
+	public static 	Item[] execute(Query[] _queries, Connection _conn)  {
 	    if (_queries == null || _queries.length<1) {
             throw new IllegalArgumentException("Query's array is empty or null");
         }
@@ -47,9 +47,10 @@ public class DBEnquiry {
 
     		 
        //	System.out.println(queries[i].getName());
+    		 String tempStr=new String("");
+    	try {
            p_stmt = con.prepareStatement(_queries[i].getSQL().toString());
            rs = p_stmt.executeQuery();
-           String tempStr=new String("");
 	            ResultSetMetaData rsmd = rs.getMetaData();
 	            	int numColumns = rsmd.getColumnCount(); 
 	            	while(rs.next()){
@@ -67,16 +68,21 @@ public class DBEnquiry {
 	            		tempStr=_queries[i].getNoData();
 	            	}
 	            }
+	            rs.close() ;
+	            con.close(); 
+    	} catch (Exception ex){
+			Configurator.logThis(Level.ERROR, "Error on DBEnquiry on query ="+_queries[i].getName()+" Error returned is "+ex);
+    		if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null){
+    			tempStr=_queries[i].getNoData();
+    		}else {
+    			tempStr="";
+    		}
+    		Configurator.logThis(Level.WARN, "I'm going to return "+tempStr+" for query "+_queries[i].getName());
+			}
 	            Item zitem = new Item(_queries[i].getName(),tempStr);
 	            SZItems.add(zitem);
-                rs.close() ;
-	         
          }
-    	 con.close();
     	          Item[] items= (Item[]) SZItems.toArray( new Item[0] );
     	          return items;        
 	}
-	
-	
-
 }
