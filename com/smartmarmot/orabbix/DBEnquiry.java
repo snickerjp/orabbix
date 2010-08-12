@@ -68,8 +68,7 @@ public class DBEnquiry {
 	            		tempStr=_queries[i].getNoData();
 	            	}
 	            }
-	            rs.close() ;
-	            con.close(); 
+	            
     	} catch (Exception ex){
 			Configurator.logThis(Level.ERROR, "Error on DBEnquiry on query ="+_queries[i].getName()+" Error returned is "+ex);
     		if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null){
@@ -82,6 +81,12 @@ public class DBEnquiry {
 	            Item zitem = new Item(_queries[i].getName(),tempStr);
 	            SZItems.add(zitem);
          }
+    	 try{
+    		 rs.close() ;
+    		 con.close();
+    	 }catch (Exception ex){
+    		 Configurator.logThis(Level.ERROR, "Error on DBEnquiry while closing connection"+ex); 
+    	 }
     	          Item[] items= (Item[]) SZItems.toArray( new Item[0] );
     	          return items;        
 	}

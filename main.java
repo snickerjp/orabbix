@@ -42,7 +42,7 @@ import com.smartmarmot.orabbix.Utility;
 
 
 public class main {
-	public static final String Version="Version 0.1.0";
+	public static final String Version="Version 1.0.2";
 	public static final String Banner =Constants.PROJECT_NAME+" "+Version; 
 	public static void printUsage()
     {
@@ -175,6 +175,7 @@ public class main {
 				       cn = null;						
 				       BlockingQueue<Item> _queue = new LinkedBlockingQueue<Item>();
 					   _queue.offer(new Item("alive", "1"));
+					   _queue.offer(new Item("OrabbixVersion", Banner));
 					   Sender sender = new Sender(_queue,zabbixServers, myDBConn[i].getName());
 				       sender.run();
 					   alive=true;
