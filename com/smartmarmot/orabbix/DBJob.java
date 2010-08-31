@@ -62,7 +62,7 @@ public class DBJob  implements Runnable {
      Configurator.logThis(Level.DEBUG,"Starting dbJob on database "+_dbname+" "+_queriesGroup);
      final long start = System.currentTimeMillis();
       try {
-   		  Item[] zitems = DBEnquiry.execute(this._queries ,this._dbConn );
+   		  Item[] zitems = DBEnquiry.execute(this._queries ,this._dbConn,this._dbname );
     	  Configurator.logThis(Level.DEBUG,"Item retrieved "+zitems.length+" on database "+this._dbname);
     	  for ( int cnt=0; cnt < zitems.length; cnt++) {
 //    		  BlockingQueue itemQueue = null;

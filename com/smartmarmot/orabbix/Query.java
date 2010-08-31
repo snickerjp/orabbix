@@ -17,11 +17,14 @@
 
 package com.smartmarmot.orabbix;
 
+import java.util.Date;
+
 public class Query {
   
   private String sql;
   private String name;
   private String nodata;
+  
   
   public Query( String _query, String _name, String _nodata) {
     if( _query == null || _query.length() ==0)
@@ -46,7 +49,7 @@ public class Query {
   }
   
   public String getNoData() {
-	return this.nodata;
-  }
+		return this.nodata;
+	  }
 
 }

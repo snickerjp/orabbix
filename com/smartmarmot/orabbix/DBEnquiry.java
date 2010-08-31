@@ -28,22 +28,23 @@ import java.util.Collection;
 import org.apache.log4j.Level;
 
 public class DBEnquiry {
-	public static 	Item[] execute(Query[] _queries, Connection _conn)  {
+	public static 	Item[] execute(Query[] _queries, Connection _conn,String dbname)  {
 	    if (_queries == null || _queries.length<1) {
             throw new IllegalArgumentException("Query's array is empty or null");
         }
         Connection con=_conn;
+        
         Collection<Item> SZItems = new ArrayList<Item>();
          ResultSet rs = null;
         PreparedStatement p_stmt = null;
-        
+       
     	//System.out.println( " db : " + _dbConn.getName() );
          
          
     	 for (int i=0 ; i< _queries.length ;i++)
          {
        //	System.out.println(queries[i].getSQL());
-    		 Configurator.logThis(Level.DEBUG,"Actual query is "+_queries[i].getName()+" statement is "+_queries[i].getSQL().toString());
+    		 Configurator.logThis(Level.DEBUG,"Actual query is "+_queries[i].getName()+" statement is "+_queries[i].getSQL().toString()+" on database="+ dbname);
 
     		 
        //	System.out.println(queries[i].getName());
@@ -60,23 +61,27 @@ public class DBEnquiry {
            			for (int r=1; r<numColumns+1; r++) {
 	        			tempStr=tempStr+rs.getObject(r).toString().trim();
            	      }
-           			Configurator.logThis(Level.DEBUG,"resultset returned from query "+_queries[i].getName()+" resultset -->"+tempStr.toString());
+           			Configurator.logThis(Level.DEBUG,"resultset returned from query "+_queries[i].getName()+" on database="+ dbname+" resultset -->"+tempStr.toString());
 	            
 	            }
-	            if (tempStr==null || tempStr.length()==0){
+	            if (tempStr==null) {
+	            	if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null){
+	            		tempStr=_queries[i].getNoData();
+	            	}
+	            } else if (tempStr.length()==0){
 	            	if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null){
 	            		tempStr=_queries[i].getNoData();
 	            	}
 	            }
 	            
     	} catch (Exception ex){
-			Configurator.logThis(Level.ERROR, "Error on DBEnquiry on query ="+_queries[i].getName()+" Error returned is "+ex);
+			Configurator.logThis(Level.ERROR, "Error on DBEnquiry on query="+_queries[i].getName()+" on database="+ dbname+" Error returned is "+ex);
     		if (_queries[i].getNoData().length()>0 && _queries[i].getNoData()!=null){
     			tempStr=_queries[i].getNoData();
     		}else {
     			tempStr="";
     		}
-    		Configurator.logThis(Level.WARN, "I'm going to return "+tempStr+" for query "+_queries[i].getName());
+    		Configurator.logThis(Level.WARN, "I'm going to return "+tempStr+" for query "+_queries[i].getName()+" on database="+dbname);
 			}
 	            Item zitem = new Item(_queries[i].getName(),tempStr);
 	            SZItems.add(zitem);
