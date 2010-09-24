@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +43,7 @@ import com.smartmarmot.orabbix.Utility;
 
 
 public class main {
-	public static final String Version="Version 1.0.2";
+	public static final String Version="Version 1.0.4";
 	public static final String Banner =Constants.PROJECT_NAME+" "+Version; 
 	public static void printUsage()
     {
@@ -118,15 +119,18 @@ public class main {
 			for (int i=0; i<dblist.length ;i++){
 				if (!htDBConn.containsKey(dblist[i].toString())) {
 					Configurator.logThis(Level.WARN,"New Database Founded: adding database "+dblist[i].toString());
-					DBConn newDBConn = c.getConnection(dblist[i].toString());
+					DBConn newDBConn =null;
+					newDBConn = c.getConnection(dblist[i].toString());
 					if (newDBConn!=null){
 						htDBConn.put(newDBConn.getName(), newDBConn.getSPDS());
 					}
 					}
 			}
+			
+			
 			/**
 			 * to clean list from removed databases
-			 */
+			
 			if (dblist.length< htDBConn.size()){
 				Hashtable<String, String> htTemp= new Hashtable<String, String>();
 				for ( int j=0;j< dblist.length;j++){
@@ -144,15 +148,30 @@ public class main {
 					
 				}
 			}
+			 */
 			/**
 			 * remove null or wrong connection			
-			 */
+			
 			Enumeration<String> en = htDBConn.keys() ;
 			ArrayList<String> alDBList =  new ArrayList<String>();
 			 while (en.hasMoreElements()){
 				 alDBList.add((String)en.nextElement());
 			 }
-			String[] newDBList = (String[]) alDBList.toArray(new String [0]);
+			 String[] newDBList = (String[]) alDBList.toArray(new String [0]);
+			 */
+		
+					
+			if (!c.isEqualsDBList(myDBConn)){
+				/**
+				 * rebuild connections DBConn[]
+				 */
+				myDBConn=c.rebuildDBList(myDBConn);
+			}
+
+			
+			
+			
+			String[] newDBList =dblist;
 			
 			for (int i=0; i<newDBList.length ;i++){
 				

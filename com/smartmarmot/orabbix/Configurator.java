@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -325,6 +326,69 @@ public class Configurator {
      return ZabbixServers;
 	}
      
+	
+	public boolean isEqualsDBList(DBConn[] _dbc) throws Exception {
+		try{
+			verifyConfig();
+			
+			String [] localdblist= this.getDBList();
+			String [] remotedblist= new String[_dbc.length];
+			for ( int i=0;i<_dbc.length;i++){
+				remotedblist[i]= _dbc[i].getName();
+			}
+        return ArrayUtils.isEquals(localdblist, remotedblist);
+	} catch (Exception ex){
+		logThis(Level.ERROR,"Error on Configurator while comparing the databases lists on isEqualsDBList "+ex);
+		return false;
+	}
+	}
+	
+
+	public  DBConn[] rebuildDBList(DBConn[] _dbc) {
+		try{
+			verifyConfig();
+			String [] localdblist= this.getDBList();
+			String [] remotedblist= new String[_dbc.length];
+			for ( int i=0;i<_dbc.length;i++){
+				remotedblist[i]= _dbc[i].getName();
+			}
+			
+			Collection<DBConn> connections = new ArrayList<DBConn>();
+			for (int j=0;j<localdblist.length;j++){
+				if (ArrayUtils.contains(remotedblist, localdblist[j])){
+					DBConn tmpDBConn;
+					tmpDBConn=_dbc[ArrayUtils.indexOf(remotedblist, localdblist[j])];
+					connections.add(tmpDBConn);
+				}
+				if (!ArrayUtils.contains(remotedblist, localdblist[j])){
+					/*
+					 * adding database
+					 * */
+					logThis(Level.INFO,"New database founded! "+localdblist[j]);
+					DBConn tmpDBConn = this.getConnection(localdblist[j]);
+					if (tmpDBConn!=null){	connections.add(tmpDBConn);	}
+				}
+			}
+			for (int x=0;x<_dbc.length;x++){
+				if (!ArrayUtils.contains(localdblist,_dbc[x].getName())){
+					logThis(Level.WARN,"Database "+_dbc[x].getName()+" removed from configuration file");
+					/**
+					 * removing database
+					 */
+					//_dbc[x].closeAll();
+					_dbc[x].getSPDS().close();
+					logThis(Level.WARN,"Database "+_dbc[x].getName()+" conections closed");
+					_dbc[x]=null;
+				}
+			}		
+			DBConn[] connArray  = (DBConn[]) connections.toArray( new DBConn[0] );	
+				return connArray;
+	} catch (Exception ex){
+		logThis(Level.ERROR,"Error on Configurator while retriving the databases list "+Constants.DATABASES_LIST+" error:"+ex);
+	 return _dbc;
+	}
+	
+	}
      
 	public String  getZabbixServer() throws Exception {
 		try{

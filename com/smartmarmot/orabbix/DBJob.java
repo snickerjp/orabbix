@@ -27,7 +27,6 @@ import org.apache.log4j.Level;
 public class DBJob  implements Runnable {
     private final Connection _dbConn;
     private Query[] _queries;
-    private final BlockingQueue<Item> _queue = new LinkedBlockingQueue<Item>();
     private final String _dbname;
     private final String _queriesGroup;
     private final int _dgNum;
@@ -62,6 +61,7 @@ public class DBJob  implements Runnable {
      Configurator.logThis(Level.DEBUG,"Starting dbJob on database "+_dbname+" "+_queriesGroup);
      final long start = System.currentTimeMillis();
       try {
+    	  BlockingQueue<Item> _queue = new LinkedBlockingQueue<Item>();
    		  Item[] zitems = DBEnquiry.execute(this._queries ,this._dbConn,this._dbname );
     	  Configurator.logThis(Level.DEBUG,"Item retrieved "+zitems.length+" on database "+this._dbname);
     	  for ( int cnt=0; cnt < zitems.length; cnt++) {
@@ -71,7 +71,7 @@ public class DBJob  implements Runnable {
     		  if (this._dgNum>0) {
     			  zItemName = zItemName+"_"+_dgNum;
     		  }
-    		  Configurator.logThis(Level.DEBUG,"dbname "+this._dbname+ "sending item  "+zitems[cnt].getKey()+" value "+zitems[cnt].getValue());
+    		  Configurator.logThis(Level.DEBUG,"dbname "+this._dbname+ " sending item "+zitems[cnt].getKey()+" value "+zitems[cnt].getValue());
     	  		_queue.offer(new Item(zitems[cnt].getKey(), zitems[cnt].getValue()));
 			}
     	  /*Postman postman = new Postman(_zabbixServer, _zabbixPort, this._dbname);
@@ -79,6 +79,7 @@ public class DBJob  implements Runnable {
     	  */
     	  Sender sender = new Sender(_queue,_zabbixServers, this._dbname);
     	  sender.run();
+    	  _queue=null;
     	  
 		_dbConn.close();
       } catch (Exception e) {
