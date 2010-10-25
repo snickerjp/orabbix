@@ -1,22 +1,21 @@
-package com.smartmarmot.orabbix;
-
-
-
-/* This file is part of Zapcat.
+/*
+ * This file is part of orabbix.
  *
- * Zapcat is free software: you can redistribute it and/or modify it under the
+ * orabbix is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  * 
- * Zapcat is distributed in the hope that it will be useful, but WITHOUT ANY
+ * orabbix is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
  * You should have received a copy of the GNU General Public License along with
- * Zapcat. If not, see <http://www.gnu.org/licenses/>.
+ * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
+
+package com.smartmarmot.orabbix;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +38,7 @@ import com.Ostermiller.util.Base64;
 public final class Sender implements Runnable {
     private static final Logger log = Logger.getLogger("Orabbix");
 
-    private final BlockingQueue<Item> queue;
+    private final BlockingQueue<ZabbixItem> queue;
 
     private final Hashtable <String , Integer >  zabbixServers;
 
@@ -74,7 +73,7 @@ public final class Sender implements Runnable {
      *            The host name, as defined in the host definition in Zabbix.
      *   
      */
-    public Sender(final BlockingQueue<Item> queue,
+    public Sender(final BlockingQueue<ZabbixItem> queue,
     		Hashtable <String , Integer > ZabbixServers,
             
             final String host) {
@@ -88,20 +87,12 @@ public final class Sender implements Runnable {
     }
 
     /**
-     * Indicate that we are about to stop.
-     */
-    public void stopping() {
-        stopping = true;
-        /*interrupt();*/
-    }
-
-    /**
      * @see java.lang.Thread#run()
      */
     @Override
     public void run() {
             try {
-                final Item item = queue.take();
+                final ZabbixItem item = queue.take();
                 int retryCount = 0;
                 trysend1:
                 while (retryCount<= retryNumber){
@@ -131,7 +122,7 @@ public final class Sender implements Runnable {
 
         // drain the queue
         while (queue.size() > 0) {
-            final Item item = queue.remove();
+            final ZabbixItem item = queue.remove();
             int retryCount = 0;
             trysend2:
             while (retryCount<= retryNumber){
@@ -201,5 +192,13 @@ public final class Sender implements Runnable {
 	            }
 	        }
         }
+    }
+
+    /**
+     * Indicate that we are about to stop.
+     */
+    public void stopping() {
+        stopping = true;
+        /*interrupt();*/
     }
 }
