@@ -81,22 +81,31 @@ public class DBEnquiry {
 						p_stmt = con.prepareStatement(_queries[i].getSQL()
 								.toString());
 						rs = p_stmt.executeQuery();
-						ResultSetMetaData rsmd = rs.getMetaData();
-						int numColumns = rsmd.getColumnCount();
-						while (rs.next()) {
-							// System.out.println(_queries[i].getSQL());
-							// System.out.println(_queries[i].getName());
-							// tempStr=rs.getObject(1).toString().trim();
-							for (int r = 1; r < numColumns + 1; r++) {
-								tempStr = tempStr
-										+ rs.getObject(r).toString().trim();
+						try {
+							ResultSetMetaData rsmd = rs.getMetaData();
+							int numColumns = rsmd.getColumnCount();
+							while (rs.next()) {
+								// System.out.println(_queries[i].getSQL());
+								// System.out.println(_queries[i].getName());
+								// tempStr=rs.getObject(1).toString().trim();
+								for (int r = 1; r < numColumns + 1; r++) {
+									tempStr = tempStr
+									+ rs.getObject(r).toString().trim();
+								}
+								Configurator.logThis(Level.DEBUG,
+										"resultset returned from query "
+										+ _queries[i].getName()
+										+ " on database=" + dbname
+										+ " resultset -->"
+										+ tempStr.toString());
 							}
-							Configurator.logThis(Level.INFO,
-									"resultset returned from query "
-											+ _queries[i].getName()
-											+ " on database=" + dbname
-											+ " resultset -->"
-											+ tempStr.toString());
+						} catch (Exception ex) {
+							Configurator.logThis(Level.WARN,
+									"Error while executing->"
+									+ _queries[i].getSQL()
+									+ "- Exception received "
+									+ ex.getMessage());
+							tempStr = null;
 						}
 						if (tempStr == null) {
 							if (_queries[i].getNoData().length() > 0
@@ -122,8 +131,8 @@ public class DBEnquiry {
 			} catch (Exception ex) {
 				Configurator.logThis(Level.ERROR,
 						"Error on DBEnquiry on query=" + _queries[i].getName()
-								+ " on database=" + dbname
-								+ " Error returned is " + ex);
+						+ " on database=" + dbname
+						+ " Error returned is " + ex);
 				if (_queries[i].getNoData().length() > 0
 						&& _queries[i].getNoData() != null) {
 					tempStr = _queries[i].getNoData();
@@ -147,7 +156,7 @@ public class DBEnquiry {
 		} catch (Exception ex) {
 			Configurator.logThis(Level.ERROR,
 					"Error on DBEnquiry while closing resultset "
-							+ ex.getMessage() + " on database=" + dbname);
+					+ ex.getMessage() + " on database=" + dbname);
 		}
 		try {
 			if (!con.isClosed())
@@ -155,7 +164,7 @@ public class DBEnquiry {
 		} catch (Exception ex) {
 			Configurator.logThis(Level.ERROR,
 					"Error on DBEnquiry while closing connection "
-							+ ex.getMessage() + " on database=" + dbname);
+					+ ex.getMessage() + " on database=" + dbname);
 		}
 		ZabbixItem[] items = (ZabbixItem[]) SZItems.toArray(new ZabbixItem[0]);
 		return items;
