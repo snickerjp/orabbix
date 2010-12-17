@@ -85,7 +85,7 @@ public final class Sender implements Runnable {
         this.queue = queue;
         this.zabbixServers = ZabbixServers;
         this.host = host;
-        this.head = "<req><host>" + Base64.encodeBase64(encodeString(host)) + "</host><key>";
+        this.head = "<req><host>" + base64Encode(host) + "</host><key>";
     }
 
     /**
@@ -177,10 +177,10 @@ public final class Sender implements Runnable {
     private void send(final String key, final String value) throws IOException {
         final StringBuilder message = new StringBuilder(head);
         //message.append(Base64.encode(key));
-        message.append(Base64.encodeBase64(encodeString(key)));
+        message.append(base64Encode(key));
         message.append(middle);
         //message.append(Base64.encode(value == null ? "" : value));
-        message.append(Base64.encodeBase64(encodeString(value== null ? "" : value)));
+        message.append(base64Encode(value == null ? "" : value));
         message.append(tail);
 
         if (log.isDebugEnabled()) {

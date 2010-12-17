@@ -153,7 +153,7 @@ public class DBEnquiry {
 							ZabbixItem zitem = new ZabbixItem(
 									_queries[i].getName(), result);
 							SZItems.add(zitem);
-							Configurator.logThis(Level.WARN, "I'm going to return "
+							Configurator.logThis(Level.DEBUG, "I'm going to return "
 									+ result + " for query "
 									+ _queries[i].getName() + " on database="
 									+ dbname);
@@ -176,7 +176,7 @@ public class DBEnquiry {
 				ZabbixItem zitem = new ZabbixItem(_queries[i].getName(),
 						tempStr);
 				SZItems.add(zitem);
-				Configurator.logThis(Level.WARN, "I'm going to return "
+				Configurator.logThis(Level.DEBUG, "I'm going to return "
 						+ tempStr + " for query " + _queries[i].getName()
 						+ " on database=" + dbname);
 			}
