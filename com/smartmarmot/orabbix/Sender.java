@@ -1,34 +1,36 @@
-/*
- * This file is part of orabbix.
+package com.smartmarmot.orabbix;
+
+
+
+/* This file is part of Zapcat.
  *
- * orabbix is free software: you can redistribute it and/or modify it under the
+ * Zapcat is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  * 
- * orabbix is distributed in the hope that it will be useful, but WITHOUT ANY
+ * Zapcat is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
  * You should have received a copy of the GNU General Public License along with
- * orabbix. If not, see <http://www.gnu.org/licenses/>.
+ * Zapcat. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.smartmarmot.orabbix;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.Ostermiller.util.Base64;
-
+import org.apache.commons.codec.binary.Base64;
 /**
  * A daemon thread that waits for and forwards data items to a Zabbix server.
  * 
@@ -83,7 +85,15 @@ public final class Sender implements Runnable {
         this.queue = queue;
         this.zabbixServers = ZabbixServers;
         this.host = host;
-        this.head = "<req><host>" + Base64.encode(host) + "</host><key>";
+        this.head = "<req><host>" + Base64.encodeBase64(encodeString(host)) + "</host><key>";
+    }
+
+    /**
+     * Indicate that we are about to stop.
+     */
+    public void stopping() {
+        stopping = true;
+        /*interrupt();*/
     }
 
     /**
@@ -100,15 +110,16 @@ public final class Sender implements Runnable {
 	                	send(item.getKey(), item.getValue());
 	                	break;
 	                	}catch (Exception e){
-	                		log.warn("Warning while sending item "+item.getKey()+" value "+item.getValue()+" on host "+host+" retry number "+retryCount+" error:"+ e);
+	                		Configurator.logThis(Level.WARN,"Warning while sending item "+item.getKey()+" value "+item.getValue()+" on host "+host+" retry number "+retryCount+" error:"+ e);
 	                		Thread.sleep(1000);
 	                		retryCount++;
-	                		if (retryCount==retryNumber){
-	                        	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount +" times");
-	                        }         
+	                		 if (retryCount==retryNumber){
+	                         	Configurator.logThis(Level.WARN,"Error i didn't sent item "+item.getKey()+" on Zabbix server "+ " on host "+host+" tried "+retryCount +" times");
+	                		 }
 	                		continue trysend1;
 	                	}
                }
+               
                 
             } catch (InterruptedException e) {
                 if (!stopping) {
@@ -130,28 +141,51 @@ public final class Sender implements Runnable {
             		send(item.getKey(), item.getValue());
             		break;
             	} catch (Exception e) {
-            		log.warn("Warning while sending item "+item.getKey()+"  on host "+host+" retry number "+retryCount+" error:"+ e);
+            		Configurator.logThis(Level.WARN,"Warning while sending item "+item.getKey()+" on host "+host+" retry number "+retryCount+" error:"+ e);
             		retryCount++;
             		continue trysend2;
             		}
            	
             }
             if (retryCount==retryNumber){
-            	log.error("Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount);
+            	Configurator.logThis(Level.WARN,"Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount);
             }
         }
     }
-
+    
+    /**
+	 * Encodes data for transmission to the server.
+	 * 
+	 * This method encodes the data in the ASCII encoding, defaulting to
+	 * the platform default encoding if that is somehow unavailable.
+	 * 
+	 * @param data
+	 * @return byte[] containing the encoded data
+	 */
+	protected byte[] encodeString(String data) {
+		try {
+			return data.getBytes("ASCII");
+		} catch (UnsupportedEncodingException e) {
+			return data.getBytes();
+		}
+	}
+	
+    protected String base64Encode(String data) {
+		return new String(Base64.encodeBase64(encodeString(data)));
+	}
+    
     private void send(final String key, final String value) throws IOException {
         final StringBuilder message = new StringBuilder(head);
-        message.append(Base64.encode(key));
+        //message.append(Base64.encode(key));
+        message.append(Base64.encodeBase64(encodeString(key)));
         message.append(middle);
-        message.append(Base64.encode(value == null ? "" : value));
+        //message.append(Base64.encode(value == null ? "" : value));
+        message.append(Base64.encodeBase64(encodeString(value== null ? "" : value)));
         message.append(tail);
 
-        /*if (log.isDebugEnabled()) {
-            log.debug("sending " + message);
-        }*/
+        if (log.isDebugEnabled()) {
+        	Configurator.logThis(Level.DEBUG,"sending " + message);
+        }
 
         Socket zabbix = null;
         OutputStreamWriter out = null;
@@ -171,16 +205,18 @@ public final class Sender implements Runnable {
 	
 	            in = zabbix.getInputStream();
 	            final int read = in.read(response);
-	            /*if (log.isDebugEnabled()) {
-	                log.debug("received " + new String(response));
-	            }*/
+	            if (log.isDebugEnabled()) {
+	            	Configurator.logThis(Level.DEBUG,"received " + new String(response));
+	            }
 	            if (read != 2 || response[0] != 'O' || response[1] != 'K') {
-	                log.warn("received unexpected response '"
+	            	Configurator.logThis(Level.WARN,"received unexpected response '"
 	                        + new String(response) + "' for key '" + key + "'");
 	            }
 	        } catch (Exception ex){
-	        	log.error("Error contacting Zabbix server "+zabbixServer+"  on port "+ zabbixServers.get(zabbixServer));
-	        } finally {
+	        	Configurator.logThis(Level.ERROR,"Error contacting Zabbix server "+zabbixServer+"  on port "+ zabbixServers.get(zabbixServer));
+	        }
+	        
+	        finally {
 	            if (in != null) {
 	                in.close();
 	            }
@@ -190,15 +226,8 @@ public final class Sender implements Runnable {
 	            if (zabbix != null) {
 	                zabbix.close();
 	            }
+
 	        }
         }
-    }
-
-    /**
-     * Indicate that we are about to stop.
-     */
-    public void stopping() {
-        stopping = true;
-        /*interrupt();*/
     }
 }

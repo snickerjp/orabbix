@@ -118,16 +118,16 @@ public class Configurator {
 				noDataFound = new String(_propsq.getProperty(_queryName + "."
 						+ Constants.QUERY_NO_DATA_FOUND));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Warning while getting " + _queryName
+				logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.QUERY_NO_DATA_FOUND
 						+ " null or not present " + ex.getMessage());
 			}
 			String raceCondQuery = "";
 			try {
-				raceCondQuery = new String(_queryName + "."
-						+ Constants.RACE_CONDITION_QUERY);
+				raceCondQuery = new String(_propsq.getProperty(_queryName + "."
+						+ Constants.RACE_CONDITION_QUERY));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Warning while getting " + _queryName
+				logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.RACE_CONDITION_QUERY
 						+ " null or not present " + ex.getMessage());
 			}
@@ -136,7 +136,7 @@ public class Configurator {
 				raceCondValue = new String(_propsq.getProperty(_queryName + "."
 						+ Constants.RACE_CONDITION_VALUE));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Warning while getting " + _queryName
+				logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.RACE_CONDITION_VALUE
 						+ " null or not present " + ex.getMessage());
 			}
@@ -148,10 +148,10 @@ public class Configurator {
 				period = new Integer(_propsq.getProperty(_queryName + "."
 						+ Constants.QUERY_PERIOD));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Warning while getting " + _queryName
+				logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.QUERY_PERIOD
 						+ " null or not present " + ex.getMessage());
-				logThis(Level.DEBUG, "INFO " + _queryName + "."
+				logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_PERIOD
 						+ " null or not present using default values 5 min.");
 				period = 5;
@@ -167,10 +167,10 @@ public class Configurator {
 					}
 				}
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Warning while getting " + _queryName
+				logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.QUERY_ACTIVE
 						+ " null or not present " + ex.getMessage());
-				logThis(Level.DEBUG, "INFO " + _queryName + "."
+				logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_ACTIVE
 						+ " null or not present using default values TRUE");
 			}
@@ -196,7 +196,7 @@ public class Configurator {
 				sleep = new Integer(_props
 						.getProperty(Constants.ORABBIX_DAEMON_SLEEP));
 			} catch (Exception e) {
-				logThis(Level.WARN, "Warning while getting "
+				logThis(Level.WARN, "Note: "
 						+ Constants.ORABBIX_DAEMON_SLEEP
 						+ "i will use the default " + sleep);
 			}
@@ -294,7 +294,7 @@ public class Configurator {
 				fis.close();
 			} catch (Exception e) {
 				logThis(Level.ERROR,
-						"Error on Configurator while retirving configuration file "
+						"Error on Configurator while retriving configuration file "
 								+ _url + " " + e.getMessage());
 			}
 			try {
@@ -305,7 +305,7 @@ public class Configurator {
 				fisq.close();
 			} catch (Exception e) {
 				logThis(Level.ERROR,
-						"Error on Configurator while retirving query file "
+						"Error on Configurator while retriving query file "
 								+ Constants.QUERY_LIST_FILE + " "
 								+ e.getMessage());
 			}
@@ -366,14 +366,14 @@ public class Configurator {
 				maxActive = new Integer(_props.getProperty(dbName + "."
 						+ Constants.CONN_MAX_ACTIVE));
 			} catch (Exception ex) {
-				logThis(Level.INFO, "Note: " + dbName + "."
+				logThis(Level.DEBUG, "Note: " + dbName + "."
 						+ Constants.CONN_MAX_ACTIVE + " " + ex.getMessage());
 				try {
 					maxActive = new Integer(_props
 							.getProperty(Constants.DATABASES_LIST + "."
 									+ Constants.CONN_MAX_ACTIVE));
 				} catch (Exception e) {
-					logThis(Level.WARN, "Warning while getting "
+					logThis(Level.WARN, "Note: "
 							+ Constants.DATABASES_LIST + "."
 							+ Constants.CONN_MAX_ACTIVE + " " + e.getMessage());
 					logThis(Level.WARN, "Warning I will use default value "
@@ -386,14 +386,14 @@ public class Configurator {
 				maxWait = new Integer(_props.getProperty(dbName + "."
 						+ Constants.CONN_MAX_WAIT));
 			} catch (Exception ex) {
-				logThis(Level.INFO, "Note: " + dbName + "."
+				logThis(Level.DEBUG, "Note: " + dbName + "."
 						+ Constants.CONN_MAX_WAIT + " " + ex.getMessage());
 				try {
 					maxWait = new Integer(_props
 							.getProperty(Constants.DATABASES_LIST + "."
 									+ Constants.CONN_MAX_WAIT));
 				} catch (Exception e) {
-					logThis(Level.WARN, "Warning while getting "
+					logThis(Level.WARN, "Note: "
 							+ Constants.DATABASES_LIST + "."
 							+ Constants.CONN_MAX_WAIT + " " + e.getMessage());
 					logThis(Level.WARN, "Warning I will use default value "
@@ -406,14 +406,14 @@ public class Configurator {
 				maxIdle = new Integer(_props.getProperty(dbName + "."
 						+ Constants.CONN_MAX_IDLE));
 			} catch (Exception ex) {
-				logThis(Level.INFO, "Note: " + dbName + "."
+				logThis(Level.DEBUG, "Note: " + dbName + "."
 						+ Constants.CONN_MAX_IDLE + " " + ex.getMessage());
 				try {
 					maxIdle = new Integer(_props
 							.getProperty(Constants.DATABASES_LIST + "."
 									+ Constants.CONN_MAX_IDLE));
 				} catch (Exception e) {
-					logThis(Level.WARN, "Warning while getting "
+					logThis(Level.WARN, "Note: "
 							+ Constants.DATABASES_LIST + "."
 							+ Constants.CONN_MAX_IDLE + " " + e.getMessage());
 					logThis(Level.WARN, "Warning I will use default value "
@@ -467,11 +467,15 @@ public class Configurator {
 	public DBConn[] getConnections() throws Exception {
 		try {
 			verifyConfig();
-			logThis(Level.DEBUG, "Starting configurator...");
 			String[] DatabaseList = getDBList();
 			Collection<DBConn> connections = new ArrayList<DBConn>();
 			for (int i = 0; i < DatabaseList.length; i++) {
-				connections.add(this.getConnection(DatabaseList[i]));
+				DBConn dbc=this.getConnection(DatabaseList[i]);
+				if (dbc!=null){
+					connections.add(dbc);
+				}else {
+	        		 logThis(Level.INFO,"This Database "+DatabaseList[i]+" removed");       	
+	        	}
 			}
 			// fis.close();
 			DBConn[] connArray = (DBConn[]) connections.toArray(new DBConn[0]);

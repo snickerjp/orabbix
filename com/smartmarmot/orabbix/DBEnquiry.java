@@ -29,7 +29,55 @@ import java.util.Date;
 
 import org.apache.log4j.Level;
 
+import com.smartmarmot.orabbix.Configurator;
+
+
+
 public class DBEnquiry {
+
+
+	public static  String ask (String _query,Connection _con,String queryName,String dbName){
+		String tempStr="";
+		try{
+			ResultSet rs = null;
+			PreparedStatement p_stmt = _con.prepareStatement(_query);
+			rs = p_stmt.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int numColumns = rsmd.getColumnCount();
+			while (rs.next()) {
+				// System.out.println(_queries[i].getSQL());
+				// System.out.println(_queries[i].getName());
+				// tempStr=rs.getObject(1).toString().trim();
+				for (int r = 1; r < numColumns + 1; r++) {
+					tempStr = tempStr
+					+ rs.getObject(r).toString().trim();
+				}
+
+			}
+			try{
+				if (rs != null)
+					rs.close();
+			} catch (Exception ex) {
+				Configurator.logThis(Level.ERROR,
+						"Error on DBEnquiry while closing resultset "
+						+ ex.getMessage() + " on database=" + dbName);
+			}
+		} catch (Exception ex) {
+			Configurator.logThis(Level.WARN,
+					"Error while executing ->"
+					+ queryName 
+					+ "- on database ->"
+					+ dbName
+					+ "- Exception received "
+					+ ex.getMessage());
+			tempStr = null;
+		}
+		return tempStr;
+	}
+
+
+
+
 	public static ZabbixItem[] execute(Query[] _queries, Connection _conn,
 			String dbname) {
 		if (_queries == null || _queries.length < 1) {
@@ -38,11 +86,6 @@ public class DBEnquiry {
 		Connection con = _conn;
 
 		Collection<ZabbixItem> SZItems = new ArrayList<ZabbixItem>();
-		ResultSet rs = null;
-		PreparedStatement p_stmt = null;
-
-		// System.out.println( " db : " + _dbConn.getName() );
-
 		for (int i = 0; i < _queries.length; i++) {
 			// System.out.println(queries[i].getSQL());
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -70,61 +113,51 @@ public class DBEnquiry {
 								+ _queries[i].getName() + "Nextrun " + datetime
 								+ " on database=" + dbname + " Period="
 								+ _queries[i].getPeriod());
+
 						/*
-						 * DateFormat dateFormat = new
-						 * SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); String
-						 * datetime = dateFormat.format(newNextRun);
-						 * Configurator.logThis(Level.INFO
-						 * ,"Query "+_queries[i].getName()+" on database="+
-						 * dbname+" nextRun -->"+datetime);
+						 * execute RaceConditionQuery
 						 */
-						p_stmt = con.prepareStatement(_queries[i].getSQL()
-								.toString());
-						rs = p_stmt.executeQuery();
-						try {
-							ResultSetMetaData rsmd = rs.getMetaData();
-							int numColumns = rsmd.getColumnCount();
-							while (rs.next()) {
-								// System.out.println(_queries[i].getSQL());
-								// System.out.println(_queries[i].getName());
-								// tempStr=rs.getObject(1).toString().trim();
-								for (int r = 1; r < numColumns + 1; r++) {
-									tempStr = tempStr
-									+ rs.getObject(r).toString().trim();
+						boolean racecond = true;
+						String result="";
+						if (_queries[i].getRaceQuery()!=null){
+							if (_queries[i].getRaceQuery().length()>0){
+								Configurator.logThis(Level.DEBUG,"INFO:"+_queries[i].getName()+" RaceCondiftionQuery ->"+_queries[i].getRaceQuery());
+								result=ask(_queries[i].getRaceQuery(), _conn,_queries[i].getName()+Constants.RACE_CONDITION_QUERY , dbname);
+								if (result!=null){
+									if (_queries[i].getRaceValue()!=null){
+										if (result.equalsIgnoreCase(_queries[i].getRaceValue())){
+											racecond = false;
+										}
+									}
 								}
-								Configurator.logThis(Level.DEBUG,
-										"resultset returned from query "
-										+ _queries[i].getName()
-										+ " on database=" + dbname
-										+ " resultset -->"
-										+ tempStr.toString());
-							}
-						} catch (Exception ex) {
-							Configurator.logThis(Level.WARN,
-									"Error while executing->"
-									+ _queries[i].getSQL()
-									+ "- Exception received "
-									+ ex.getMessage());
-							tempStr = null;
-						}
-						if (tempStr == null) {
-							if (_queries[i].getNoData().length() > 0
-									&& _queries[i].getNoData() != null) {
-								tempStr = _queries[i].getNoData();
-							}
-						} else if (tempStr.length() == 0) {
-							if (_queries[i].getNoData().length() > 0
-									&& _queries[i].getNoData() != null) {
-								tempStr = _queries[i].getNoData();
 							}
 						}
-						ZabbixItem zitem = new ZabbixItem(
-								_queries[i].getName(), tempStr);
-						SZItems.add(zitem);
-						Configurator.logThis(Level.WARN, "I'm going to return "
-								+ tempStr + " for query "
-								+ _queries[i].getName() + " on database="
-								+ dbname);
+						result="";
+						if (racecond){
+							result=ask(_queries[i].getSQL().toString(),
+									_conn,
+									_queries[i].getName(),
+									dbname);
+							if (result == null) {
+								if (_queries[i].getNoData().length() > 0
+										&& _queries[i].getNoData() != null) {
+									result = _queries[i].getNoData();
+								}
+							} else if (result.length() == 0) {
+								if (_queries[i].getNoData().length() > 0
+										&& _queries[i].getNoData() != null) {
+									result = _queries[i].getNoData();
+								}
+							}
+
+							ZabbixItem zitem = new ZabbixItem(
+									_queries[i].getName(), result);
+							SZItems.add(zitem);
+							Configurator.logThis(Level.WARN, "I'm going to return "
+									+ result + " for query "
+									+ _queries[i].getName() + " on database="
+									+ dbname);
+						}
 					}
 
 				}
@@ -133,12 +166,12 @@ public class DBEnquiry {
 						"Error on DBEnquiry on query=" + _queries[i].getName()
 						+ " on database=" + dbname
 						+ " Error returned is " + ex);
-				if (_queries[i].getNoData().length() > 0
-						&& _queries[i].getNoData() != null) {
-					tempStr = _queries[i].getNoData();
+				if (_queries[i].getNoData() != null)
+				{
+					if (_queries[i].getNoData().length() > 0)
+						tempStr = _queries[i].getNoData();
 				} else {
 					tempStr = "";
-
 				}
 				ZabbixItem zitem = new ZabbixItem(_queries[i].getName(),
 						tempStr);
@@ -148,15 +181,6 @@ public class DBEnquiry {
 						+ " on database=" + dbname);
 			}
 
-		}
-
-		try {
-			if (rs != null)
-				rs.close();
-		} catch (Exception ex) {
-			Configurator.logThis(Level.ERROR,
-					"Error on DBEnquiry while closing resultset "
-					+ ex.getMessage() + " on database=" + dbname);
 		}
 		try {
 			if (!con.isClosed())

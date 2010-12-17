@@ -40,7 +40,7 @@ import com.smartmarmot.orabbix.Utility;
 import com.smartmarmot.orabbix.ZabbixItem;
 
 public class main {
-	public static final String Version = "Version 1.1.0 RC1";
+	public static final String Version = "Version 1.1.0";
 	public static final String Banner = Constants.PROJECT_NAME + " " + Version;
 
 	/**
@@ -54,20 +54,16 @@ public class main {
 				printUsage();
 				System.exit(0);
 			}
-			Configurator.logThis(Level.ALL, "Starting " + Banner);
+			Configurator.logThis(Level.INFO, "Starting " + Banner);
 
 			String configFile;
 			configFile = new String(args[0].toString());
 
 			Configurator cfg = new Configurator(configFile);
-			Integer maxThread = cfg.getMaxThread();
-
-			ExecutorService executor = Executors.newFixedThreadPool(maxThread
-					.intValue());
-
+			
 			RuntimeMXBean rmxb = ManagementFactory.getRuntimeMXBean();
 			String pid = rmxb.getName();
-			Configurator.logThis(Level.ALL, "Orabbix started with pid:"
+			Configurator.logThis(Level.INFO, "Orabbix started with pid:"
 					+ pid.split("@")[0].toString());
 
 			// System.out.print("pid: "+pid.split("@")[0].toString());
@@ -82,6 +78,26 @@ public class main {
 
 			Locale.setDefault(Locale.US);
 			DBConn[] myDBConn = cfg.getConnections();
+
+			/**
+			 * retrieve maxThread
+			 */
+			Integer maxThread = 0;
+			try {
+				maxThread = cfg.getMaxThread();
+			} catch (Exception e) {
+				Configurator.logThis(Level.WARN,
+						"MaxThread not defined calculated maxThread = "
+								+ myDBConn.length * 3);
+			}
+			if (maxThread == 0) {
+				maxThread = myDBConn.length * 3;
+			}
+			
+			ExecutorService executor = Executors.newFixedThreadPool(maxThread
+					.intValue());
+
+			
 
 			/**
 			 * populate qbox
@@ -113,9 +129,9 @@ public class main {
 
 				
 				if (!c.isEqualsDBList(myDBConn)) {
-					/**
-					 * rebuild connections DBConn[]
-					 */
+					
+					 // rebuild connections DBConn[]
+					 
 					myDBConn = c.rebuildDBList(myDBConn);
 					for (int i = 1; i < myDBConn.length; i++) {
 						if (!qbox.containsKey(myDBConn[i].getName())){
@@ -144,7 +160,7 @@ public class main {
 					SharedPoolDataSource spds = myDBConn[i].getSPDS();
 
 					Configurator.logThis(Level.DEBUG,
-							"Retrieve connection for dbname ->" + myDBConn[i]);
+							"Retrieve connection for dbname ->" + myDBConn[i].getName());
 					boolean alive = false;
 					Hashtable<String, Integer> zabbixServers = c
 							.getZabbixServers();
@@ -189,11 +205,11 @@ public class main {
 											+ spds.getNumIdle()
 											+ " active connetion -->"
 											+ spds.getNumActive() + ""
-											+ " dbname -->" + myDBConn[i]);
+											+ " dbname -->" + myDBConn[i].getName());
 							Configurator
 									.logThis(Level.DEBUG,
 											"Starting ZabbixTrapper for "
-													+ myDBConn[i]);
+													+ myDBConn[i].getName());
 							// final ZabbixTrapper trapper =
 							// c.getTrapper(newDBList[i]);
 							Runnable runner = new DBJob(con, q,
@@ -205,7 +221,7 @@ public class main {
 
 							Configurator.logThis(Level.ERROR,
 									"Error in main while retrieve the connection for database "
-											+ myDBConn[i] + " error:  " + e);
+											+ myDBConn[i].getName() + " error:  " + e);
 						}
 					} else { // if database is become unreachable i'll send
 								// noDataFound
@@ -220,13 +236,13 @@ public class main {
 					}
 				}
 
-				Configurator.logThis(Level.DEBUG,
-						"going in bed...and sleep for "
-								+ Configurator.getSleep() * 1000 + " ms");
+				//Configurator.logThis(Level.DEBUG,"going in bed...and sleep for "+ Configurator.getSleep() * 1000 + " ms");
+								
 				// System.out.println("going in bed...and sleep for "+c.getSleep()*1000/60000+
 				// " m");
-				Thread.sleep(Configurator.getSleep() * 1000);
-				Configurator.logThis(Level.DEBUG, "waking up Goood Morning");
+				//Thread.sleep(Configurator.getSleep() * 1000);
+				Thread.sleep(60*1000);
+				Configurator.logThis(Level.DEBUG, "Waking up Goood Morning");
 
 			}
 
