@@ -40,28 +40,11 @@ public class Constants {
 	public static final String RACE_CONDITION_VALUE = "RaceConditionValue";
 	public static final String QUERY_PERIOD = "Period";
 	public static final String QUERY_ACTIVE = "Active";
-	// public static final String POSTGRES_VALIDATION_QUERY = "SELECT 1";
-	// public static final String POSTGRES_WHOAMI_QUERY = "SELECT CURRENT_USER";
-	// public static final String POSTGRES_DBNAME_QUERY =
-	// "SELECT CURRENT_DATABASE()";
-	// public static final String POSTGRES = "Postgress";
-	// public static final String POSTGRES_DRIVER = "org.postgresql.Driver";
-	// public static final String DB2_VALIDATION_QUERY = "SELECT 1";
-	// public static final String DB2_WHOAMI_QUERY = "SELECT SYSTEM_USER";
-	// public static final String DB2_DBNAME_QUERY = "SELECT @@SERVERNAME";
-	// public static final String DB2 = "DB2";
-	// public static final String DB2_DRIVER = "com.ibm.db2.jcc.DB2Driver";
-	// public static final String MYSQL = "Mysql";
 	public static final String ZABBIX_SERVER_LIST = "ZabbixServerList";
 	public static final String ZABBIX_SERVER_PORT = "Port";
 	public static final String ZABBIX_SERVER_HOST = "Address";
 	public static final String ORABBIX_PIDFILE = "OrabbixDaemon.PidFile";
-	// public static final String POSTBIX_PIDFILE = "PostbixDaemon.PidFile";
 	public static final String ORABBIX_DAEMON_SLEEP = "OrabbixDaemon.Sleep";
-	// public static final String POSTBIX_DAEMON_SLEEP = "PostbixDaemon.Sleep";
 	public static final String ORABBIX_DAEMON_THREAD = "OrabbixDaemon.MaxThreadNumber";
-	// public static final String POSTBIX_DAEMON_THREAD =
-	// "PostbixDaemon.MaxThreadNumber";
 	public static final int ZABBIX_SERVER_DEFAULT_PORT = 10051;
-
 }
