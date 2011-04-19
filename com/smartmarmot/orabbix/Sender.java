@@ -110,11 +110,19 @@ public final class Sender implements Runnable {
 	                	send(item.getKey(), item.getValue());
 	                	break;
 	                	}catch (Exception e){
-	                		Configurator.logThis(Level.WARN,"Warning while sending item "+item.getKey()+" value "+item.getValue()+" on host "+host+" retry number "+retryCount+" error:"+ e);
+					Configurator.logThis(Level.WARN,
+							"Warning while sending item " + item.getKey()
+									+ " value " + item.getValue() + " on host "
+									+ host + " retry number " + retryCount
+									+ " error:" + e);
 	                		Thread.sleep(1000);
 	                		retryCount++;
 	                		 if (retryCount==retryNumber){
-	                         	Configurator.logThis(Level.WARN,"Error i didn't sent item "+item.getKey()+" on Zabbix server "+ " on host "+host+" tried "+retryCount +" times");
+						Configurator.logThis(Level.WARN,
+								"Error i didn't sent item " + item.getKey()
+										+ " on Zabbix server " + " on host "
+										+ host + " tried " + retryCount
+										+ " times");
 	                		 }
 	                		continue trysend1;
 	                	}
@@ -141,14 +149,19 @@ public final class Sender implements Runnable {
             		send(item.getKey(), item.getValue());
             		break;
             	} catch (Exception e) {
-            		Configurator.logThis(Level.WARN,"Warning while sending item "+item.getKey()+" on host "+host+" retry number "+retryCount+" error:"+ e);
+					Configurator.logThis(Level.WARN,
+							"Warning while sending item " + item.getKey()
+									+ " on host " + host + " retry number "
+									+ retryCount + " error:" + e);
             		retryCount++;
             		continue trysend2;
             		}
            	
             }
             if (retryCount==retryNumber){
-            	Configurator.logThis(Level.WARN,"Error i didn't sent item "+item.getKey()+"  on host "+host+" tried "+retryCount);
+				Configurator.logThis(Level.WARN, "Error i didn't sent item "
+						+ item.getKey() + "  on host " + host + " tried "
+						+ retryCount);
             }
         }
     }
@@ -195,7 +208,8 @@ public final class Sender implements Runnable {
         while (serverlist.hasMoreElements()){
         	String zabbixServer = serverlist.nextElement();
 	        try {
-	            zabbix = new Socket(zabbixServer, zabbixServers.get(zabbixServer).intValue());
+				zabbix = new Socket(zabbixServer, zabbixServers.get(
+						zabbixServer).intValue());
 	            zabbix.setSoTimeout(TIMEOUT);
 	            
 	
@@ -206,14 +220,20 @@ public final class Sender implements Runnable {
 	            in = zabbix.getInputStream();
 	            final int read = in.read(response);
 	            if (log.isDebugEnabled()) {
-	            	Configurator.logThis(Level.DEBUG,"received " + new String(response));
+					Configurator.logThis(Level.DEBUG, "received "
+							+ new String(response));
 	            }
 	            if (read != 2 || response[0] != 'O' || response[1] != 'K') {
-	            	Configurator.logThis(Level.WARN,"received unexpected response '"
-	                        + new String(response) + "' for key '" + key + "'");
+					Configurator.logThis(Level.WARN,
+							"received unexpected response '"
+									+ new String(response) + "' for key '"
+									+ key + "'");
 	            }
 	        } catch (Exception ex){
-	        	Configurator.logThis(Level.ERROR,"Error contacting Zabbix server "+zabbixServer+"  on port "+ zabbixServers.get(zabbixServer));
+				Configurator.logThis(Level.ERROR,
+						"Error contacting Zabbix server " + zabbixServer
+								+ "  on port "
+								+ zabbixServers.get(zabbixServer));
 	        }
 	        
 	        finally {

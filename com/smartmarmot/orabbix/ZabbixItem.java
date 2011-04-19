@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2010 Andrea Dalle Vacche.
+ * 
  * This file is part of orabbix.
  *
  * orabbix is free software: you can redistribute it and/or modify it under the
@@ -32,7 +34,7 @@ public final class ZabbixItem {
 	 *            The literal value.
 	 */
 
-	public ZabbixItem(final String key, final String value) {
+	/*public ZabbixItem(final String key, final String value) {
 		if (key == null || "".equals(key.trim())) {
 			throw new IllegalArgumentException("empty key");
 		}
@@ -45,7 +47,7 @@ public final class ZabbixItem {
 		this.value = value;
 		this.hostname = null;
 	}
-
+*/
 	public ZabbixItem(final String key, final String value,
 			final String hostname) {
 		if (key == null || "".equals(key.trim())) {

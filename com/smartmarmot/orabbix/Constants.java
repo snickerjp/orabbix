@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2010 Andrea Dalle Vacche.
+ * 
  * This file is part of orabbix.
  *
  * orabbix is free software: you can redistribute it and/or modify it under the
@@ -18,6 +20,8 @@
 package com.smartmarmot.orabbix;
 
 public class Constants {
+	public static final String VERSION = "Version 1.2.0 RC2";
+	public static final String BANNER = Constants.PROJECT_NAME + " " + VERSION;
 	public static final String PROJECT_NAME = "Orabbix";
 	public static final String DATABASES_LIST = "DatabaseList";
 	public static final String DELIMITER = ",";
@@ -37,6 +41,7 @@ public class Constants {
 	public static final String ORACLE_WHOAMI_QUERY = "SELECT SYS_CONTEXT ('USERENV', 'SESSION_USER') FROM DUAL";
 	public static final String ORACLE_DBNAME_QUERY = "SELECT SYS_CONTEXT ('USERENV', 'DB_NAME') FROM DUAL";
 	public static final String RACE_CONDITION_QUERY = "RaceConditionQuery";
+	public static final String RACE_CONDITION_EXCLUDE_COLUMNS = "RaceConditionQueryExcludeColumnsList";
 	public static final String RACE_CONDITION_VALUE = "RaceConditionValue";
 	public static final String QUERY_PERIOD = "Period";
 	public static final String QUERY_ACTIVE = "Active";
@@ -47,4 +52,7 @@ public class Constants {
 	public static final String ORABBIX_DAEMON_SLEEP = "OrabbixDaemon.Sleep";
 	public static final String ORABBIX_DAEMON_THREAD = "OrabbixDaemon.MaxThreadNumber";
 	public static final int ZABBIX_SERVER_DEFAULT_PORT = 10051;
+	public static final String QUERY_TRIM = "Trim";
+	public static final String QUERY_SPACE = "AddSpaces";
+	public static final String QUERY_EXCLUDE_COLUMNS = "ExcludeColumnsList";
 }

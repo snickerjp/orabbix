@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2010 Andrea Dalle Vacche.
+ * 
  * This file is part of orabbix.
  *
  * orabbix is free software: you can redistribute it and/or modify it under the
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -37,11 +40,13 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.smartmarmot.orabbix.Constants;
+
 public class Configurator {
 	private static Properties _props;
 	private static Properties _propsq;
 
-	public static Properties getPropsFromFile(String _filename) {
+	protected static Properties getPropsFromFile(String _filename) {
 		try {
 			verifyConfig();
 			Properties propsq = new Properties();
@@ -65,12 +70,12 @@ public class Configurator {
 		return null;
 	}
 
-	public static Query[] getQueries(Properties _propsq) throws Exception {
+	protected static Query[] getQueries(Properties _propsq) throws Exception {
 		return getQueries(Constants.QUERY_LIST, _propsq);
 	}
 
 	
-	public static Query[] getQueries(String parameter, Properties _propsq)
+	private static Query[] getQueries(String parameter, Properties _propsq)
 			throws Exception {
 		try {
 			StringTokenizer stq = new StringTokenizer(_propsq
@@ -100,8 +105,8 @@ public class Configurator {
 
 	}
 
-	public static Query getQueryProperties(Properties _propsq, String _queryName)
-			throws Exception {
+	private static Query getQueryProperties(Properties _propsq,
+			String _queryName) throws Exception {
 		try {
 
 			String query = "";
@@ -175,36 +180,90 @@ public class Configurator {
 						+ " null or not present using default values TRUE");
 			}
 
+			Boolean trim = true;
+			try {
+				String trim_str = _propsq.getProperty(_queryName + "."
+						+ Constants.QUERY_TRIM);
+				if (trim_str != null) {
+					if (trim_str.equalsIgnoreCase("false")) {
+						trim = false;
+					}
+				}
+			} catch (Exception ex) {
+				logThis(Level.DEBUG, "Note: " + _queryName + "."
+						+ Constants.QUERY_TRIM + " null or not present "
+						+ ex.getMessage());
+				logThis(Level.DEBUG, "Note: " + _queryName + "."
+						+ Constants.QUERY_TRIM
+						+ " null or not present using default values TRUE");
+			}
+
+			Boolean space = false;
+			try {
+				String space_str = _propsq.getProperty(_queryName + "."
+						+ Constants.QUERY_SPACE);
+				if (space_str != null) {
+					if (space_str.equalsIgnoreCase("false")) {
+						space = false;
+					}
+				}
+			} catch (Exception ex) {
+				logThis(Level.DEBUG, "Note: " + _queryName + "."
+						+ Constants.QUERY_SPACE + " null or not present "
+						+ ex.getMessage());
+				logThis(Level.DEBUG, "Note: " + _queryName + "."
+						+ Constants.QUERY_SPACE
+						+ " null or not present using default values TRUE");
+			}
+
+			List<Integer> excludeColumns = new ArrayList<Integer>();
+			try {
+				String excludeColumnsList = new String(_propsq
+						.getProperty(_queryName + "."
+								+ Constants.QUERY_EXCLUDE_COLUMNS));
+
+				StringTokenizer st = new StringTokenizer(excludeColumnsList,
+						Constants.DELIMITER);
+				while (st.hasMoreTokens()) {
+					String token = st.nextToken().toString();
+					Integer tmpInteger = new Integer(token);
+					excludeColumns.add(tmpInteger);
+				}
+			} catch (Exception ex) {
+				logThis(Level.DEBUG, "Note: " + _queryName + "."
+						+ Constants.QUERY_EXCLUDE_COLUMNS + " error "
+						+ ex.getMessage());
+			}
+
+			List<Integer> raceExcludeColumns = new ArrayList<Integer>();
+			try {
+				String excludeColumnsList = new String(_propsq
+						.getProperty(_queryName + "."
+								+ Constants.RACE_CONDITION_EXCLUDE_COLUMNS));
+
+				StringTokenizer st = new StringTokenizer(excludeColumnsList,
+						Constants.DELIMITER);
+				while (st.hasMoreTokens()) {
+					String token = st.nextToken().toString();
+					Integer tmpInteger = new Integer(token);
+					excludeColumns.add(tmpInteger);
+				}
+			} catch (Exception ex) {
+				logThis(Level.DEBUG, "Note: " + _queryName + "."
+						+ Constants.RACE_CONDITION_EXCLUDE_COLUMNS + " error "
+						+ ex.getMessage());
+			}
+			
+			
 			Query q = new Query(query, _queryName, noDataFound, raceCondQuery,
-					raceCondValue, period, active);
-		
+					raceCondValue, period, active, trim, space, excludeColumns,
+					raceExcludeColumns);
+
 			return q;
 		} catch (Exception ex) {
 
 			logThis(Level.ERROR, "Error on Configurator on getQueryProperties("
 					+ _propsq.toString() + ") " + ex.getMessage());
-			return null;
-		}
-
-	}
-
-	public static Integer getSleep() throws Exception {
-		try {
-			verifyConfig();
-			Integer sleep = new Integer(5);
-			try {
-				sleep = new Integer(_props
-						.getProperty(Constants.ORABBIX_DAEMON_SLEEP));
-			} catch (Exception e) {
-				logThis(Level.WARN, "Note: "
-						+ Constants.ORABBIX_DAEMON_SLEEP
-						+ "i will use the default " + sleep);
-			}
-			return sleep;
-
-		} catch (Exception ex) {
-			logThis(Level.ERROR, "Error on Configurator while retriving "
-					+ Constants.ORABBIX_DAEMON_SLEEP + " " + ex);
 			return null;
 		}
 	}
@@ -217,7 +276,7 @@ public class Configurator {
 		logger.log(level, message);
 	}
 
-	public static Query[] refresh(Query[] _myquery, String _prpFile) {
+	protected static Query[] refresh(Query[] _myquery, String _prpFile) {
 		Properties _prp = getPropsFromFile(_prpFile);
 		for (int i = 0; i < _myquery.length; i++) {
 			try {
@@ -317,7 +376,7 @@ public class Configurator {
 		}
 	}
 
-	public DBConn getConnection(String dbName) throws Exception {
+	private DBConn getConnection(String dbName) throws Exception {
 		try {
 			verifyConfig();
 
@@ -421,6 +480,17 @@ public class Configurator {
 				}
 			}
 			tds.setMaxIdle(maxIdle.intValue());
+			
+			logThis( Level.INFO,"DB Pool created: " + tds);
+    		logThis( Level.INFO, "URL=" + url.toString() );
+    		logThis( Level.INFO, "maxPoolSize=" + tds.getMaxActive() );
+    		logThis( Level.INFO, "maxIdleSize=" + tds.getMaxIdle() );
+    		logThis( Level.INFO, "maxIdleTime=" + tds.getMinEvictableIdleTimeMillis() + "ms" );
+    		logThis( Level.INFO, "poolTimeout=" + tds.getMaxWait() );
+    		logThis( Level.INFO, "timeBetweenEvictionRunsMillis=" + tds.getTimeBetweenEvictionRunsMillis() );
+    		logThis( Level.INFO, "numTestsPerEvictionRun=" + tds.getNumTestsPerEvictionRun() );
+			
+    		
 			tds.setValidationQuery(Constants.ORACLE_VALIDATION_QUERY);
 			Connection con = null;
 			con = tds.getConnection();
@@ -538,9 +608,6 @@ public class Configurator {
 					.getProperty(Constants.ORABBIX_PIDFILE));
 			logThis(Level.INFO, "PidFile -> " + _pidfile);
 
-			if (_pidfile == null) {
-				logThis(Level.ERROR, "Error null pidfile from " + _props);
-			}
 			if (_pidfile == "") {
 				logThis(Level.ERROR, "Error retrieving pidfile from " + _props);
 			}
@@ -795,6 +862,23 @@ public class Configurator {
 			return _dbc;
 		}
 
+	}
+	public static Integer  getSleep() throws Exception {
+		try{
+			verifyConfig();
+			Integer sleep = new Integer(5);
+			try{
+				sleep=new Integer(_props.getProperty(Constants.ORABBIX_DAEMON_SLEEP));
+			}catch (Exception e){
+				logThis(Level.WARN,"Warning while getting "+Constants.ORABBIX_DAEMON_SLEEP+" I will use the default "+sleep);
+			}
+			return sleep;
+
+		} catch (Exception ex){
+
+			logThis(Level.ERROR,"Error on Configurator while retriving "+Constants.ORABBIX_DAEMON_SLEEP+" "+ex);
+			return null;
+		}
 	}
 
 }

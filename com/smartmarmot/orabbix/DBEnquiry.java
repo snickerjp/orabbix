@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2010 Andrea Dalle Vacche.
+ * 
  * This file is part of orabbix.
  *
  * orabbix is free software: you can redistribute it and/or modify it under the
@@ -14,9 +16,9 @@
  * You should have received a copy of the GNU General Public License along with
  * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.smartmarmot.orabbix;
 
+import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,7 +38,9 @@ import com.smartmarmot.orabbix.Configurator;
 public class DBEnquiry {
 
 
-	public static  String ask (String _query,Connection _con,String queryName,String dbName){
+	public static String ask(String _query, Connection _con, String queryName,
+			String dbName, Boolean trim, Boolean space,
+			List<Integer> _excludeColumns) {
 		String tempStr="";
 		try{
 			ResultSet rs = null;
@@ -49,10 +53,19 @@ public class DBEnquiry {
 				// System.out.println(_queries[i].getName());
 				// tempStr=rs.getObject(1).toString().trim();
 				for (int r = 1; r < numColumns + 1; r++) {
-					tempStr = tempStr
-					+ rs.getObject(r).toString().trim();
+					Integer tmpInteger = new Integer(r);
+					if (!_excludeColumns.contains(tmpInteger)) {
+						if (trim) {
+							tempStr = tempStr
+									+ rs.getObject(r).toString().trim();
+						} else {
+							tempStr = tempStr + rs.getObject(r).toString();
+						}
+						if (space && (r < numColumns)) {
+							tempStr = tempStr + ' ';
+						}
+					}
 				}
-
 			}
 			try{
 				if (rs != null)
@@ -118,26 +131,40 @@ public class DBEnquiry {
 						 * execute RaceConditionQuery
 						 */
 						boolean racecond = true;
-						String result="";
-						if (_queries[i].getRaceQuery()!=null){
-							if (_queries[i].getRaceQuery().length()>0){
-								Configurator.logThis(Level.DEBUG,"INFO:"+_queries[i].getName()+" RaceCondiftionQuery ->"+_queries[i].getRaceQuery());
-								result=ask(_queries[i].getRaceQuery(), _conn,_queries[i].getName()+Constants.RACE_CONDITION_QUERY , dbname);
-								if (result!=null){
-									if (_queries[i].getRaceValue()!=null){
-										if (result.equalsIgnoreCase(_queries[i].getRaceValue())){
+						String result = "";
+						if (_queries[i].getRaceQuery() != null) {
+							if (_queries[i].getRaceQuery().length() > 0) {
+								Configurator.logThis(Level.DEBUG, "INFO:"
+										+ _queries[i].getName()
+										+ " RaceCondiftionQuery ->"
+										+ _queries[i].getRaceQuery());
+								result = ask(
+										_queries[i].getRaceQuery(),
+										_conn,
+										_queries[i].getName()
+												+ Constants.RACE_CONDITION_QUERY,
+										dbname, _queries[i].getTrim(),
+										_queries[i].getSpace(), 
+										_queries[i]
+												.getRaceExcludeColumnsList());
+								if (result != null) {
+									if (_queries[i].getRaceValue() != null) {
+										if (!result.equalsIgnoreCase(_queries[i]
+												.getRaceValue())) {
 											racecond = false;
 										}
 									}
 								}
 							}
 						}
-						result="";
-						if (racecond){
-							result=ask(_queries[i].getSQL().toString(),
-									_conn,
-									_queries[i].getName(),
-									dbname);
+						result = "";
+						if (racecond) {
+							result = ask(_queries[i].getSQL().toString(),
+									_conn, _queries[i].getName(), dbname,
+									_queries[i].getTrim(), _queries[i]
+											.getSpace(), 
+											_queries[i]
+											.getExcludeColumnsList());
 							if (result == null) {
 								if (_queries[i].getNoData().length() > 0
 										&& _queries[i].getNoData() != null) {
@@ -150,13 +177,14 @@ public class DBEnquiry {
 								}
 							}
 
-							ZabbixItem zitem = new ZabbixItem(
-									_queries[i].getName(), result);
+							ZabbixItem zitem = new ZabbixItem(_queries[i]
+									.getName(), result,dbname);
 							SZItems.add(zitem);
-							Configurator.logThis(Level.DEBUG, "I'm going to return "
-									+ result + " for query "
-									+ _queries[i].getName() + " on database="
-									+ dbname);
+							Configurator.logThis(Level.DEBUG,
+									"I'm going to return " + result
+											+ " for query "
+											+ _queries[i].getName()
+											+ " on database=" + dbname);
 						}
 					}
 
@@ -174,7 +202,7 @@ public class DBEnquiry {
 					tempStr = "";
 				}
 				ZabbixItem zitem = new ZabbixItem(_queries[i].getName(),
-						tempStr);
+						tempStr , dbname);
 				SZItems.add(zitem);
 				Configurator.logThis(Level.DEBUG, "I'm going to return "
 						+ tempStr + " for query " + _queries[i].getName()

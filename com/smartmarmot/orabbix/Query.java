@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2010 Andrea Dalle Vacche.
+ * 
  * This file is part of orabbix.
  *
  * orabbix is free software: you can redistribute it and/or modify it under the
@@ -17,6 +19,7 @@
 
 package com.smartmarmot.orabbix;
 
+import java.util.List;
 import java.util.Date;
 
 public class Query {
@@ -26,28 +29,18 @@ public class Query {
 	private String nodata;
 	private String racequery;
 	private String racevalue;
+	private List<Integer> raceExcludeColumns = null;
 	private int period = -1;
 	private Date nextrun;
 	private Boolean active = true;
-
-	public Query(String _query, String _name, String _nodata) {
-		if (_query == null || _query.length() == 0)
-			throw new RuntimeException("empty query");
-		this.sql = _query;
-		if (_name != null && _name.length() > 0)
-			this.name = _name;
-		else
-			this.name = _query;
-		if (_nodata != null && _nodata.length() > 0) {
-			this.nodata = _nodata;
-		} else
-			this.nodata = "";
-		this.racequery = "";
-		this.racevalue = "";
-	}
+	private List<Integer> excludeColumns = null;
+	private Boolean space = false;
+	private Boolean trim = true;
 
 	public Query(String _query, String _name, String _nodata, String _rccondq,
-			String _rccondval, int _period, Boolean _active) {
+			String _rccondval, int _period, Boolean _active, Boolean _trim,
+			Boolean _space, List<Integer> _excludeColumns,
+			List<Integer> _raceExcludeColumns) {
 		if (_query == null || _query.length() == 0)
 			throw new RuntimeException("empty query");
 		this.sql = _query;
@@ -76,11 +69,21 @@ public class Query {
 				this.nextrun = newNextRun;
 			}
 		}
-
+		if (_trim != null) {
+			this.setTrim(_trim);
+		}
+		if (_space != null) {
+			this.setSpace(_space);
+		}
 		if (_active != null) {
 			this.setActive(_active);
 		}
-
+		if (_excludeColumns != null) {
+			this.setExcludeColumnsList(_excludeColumns);
+		}
+		if (_raceExcludeColumns != null) {
+			this.setRaceExcludeColumnsList(_raceExcludeColumns);
+		}
 	}
 
 	public Boolean getActive() {
@@ -138,4 +141,30 @@ public class Query {
 
 	}
 
+	public void setTrim(Boolean trim) {
+		this.trim = trim;
+	}
+	public Boolean getTrim() {
+		return trim;
+	}
+	public void setSpace(Boolean space) {
+		this.space = space;
+	}
+	public Boolean getSpace() {
+		return space;
+	}
+	public List<Integer> getExcludeColumnsList() {
+		return this.excludeColumns;
+	}
+	public void setExcludeColumnsList(List<Integer> excludeList) {
+		if (excludeList != null) {
+			this.excludeColumns = excludeList;
+		}
+	}
+	public void setRaceExcludeColumnsList(List<Integer> raceExcludeColumns) {
+		this.raceExcludeColumns = raceExcludeColumns;
+	}
+	public List<Integer> getRaceExcludeColumnsList() {
+		return raceExcludeColumns;
+	}
 }
