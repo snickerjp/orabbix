@@ -77,14 +77,8 @@ public class DBJob implements Runnable {
 			rs = p_stmt.executeQuery();
 			rs.next();
 			//_conn.close();
-			BlockingQueue<ZabbixItem> _queue = new LinkedBlockingQueue<ZabbixItem>();
-			_queue.offer(new ZabbixItem("alive", "1",this._dbname));
-			_queue.offer(new ZabbixItem(Constants.PROJECT_NAME+"Version", Constants.BANNER,this._dbname));
-			Sender sender = new Sender(_queue, this._zabbixServers,
-					this._dbname);
-			sender.run();
 			return true;
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Configurator.logThis(Level.DEBUG, "Database "
@@ -105,6 +99,8 @@ public class DBJob implements Runnable {
 				dbConn = this._spds.getConnection();
 			}*/
 			if (Alive(dbConn)){
+				_queue.offer(new ZabbixItem("alive", "1",this._dbname));
+				_queue.offer(new ZabbixItem(Constants.PROJECT_NAME+"Version", Constants.BANNER,this._dbname));
 				ZabbixItem[] zitems = DBEnquiry.execute(this._queries,
 						dbConn, this._dbname);
 				if (zitems != null && zitems.length > 0) {
@@ -122,10 +118,11 @@ public class DBJob implements Runnable {
 						                                              .getValue(),
 						                                              _dbname));
 					}
-					Sender sender = new Sender(_queue, _zabbixServers, this._dbname);
-					sender.run();
+					
 				}
 				dbConn.close();
+				Sender sender = new Sender(_queue, _zabbixServers, this._dbname);
+				sender.run();
 			} else{
 				BlockingQueue<ZabbixItem> _queue = new LinkedBlockingQueue<ZabbixItem>();
 				_queue.offer(new ZabbixItem("alive", "0",this._dbname));
