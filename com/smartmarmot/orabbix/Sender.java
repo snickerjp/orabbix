@@ -31,6 +31,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import org.apache.commons.codec.binary.Base64;
+
+import com.smartmarmot.zabbix.ZabbixItem;
 /**
  * A daemon thread that waits for and forwards data items to a Zabbix server.
  * 

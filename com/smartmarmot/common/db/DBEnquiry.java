@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.smartmarmot.orabbix;
+package com.smartmarmot.common.db;
 
 import java.util.List;
 import java.sql.Connection;
@@ -32,6 +32,9 @@ import java.util.Date;
 import org.apache.log4j.Level;
 
 import com.smartmarmot.orabbix.Configurator;
+import com.smartmarmot.orabbix.Constants;
+import com.smartmarmot.orabbix.Query;
+import com.smartmarmot.zabbix.ZabbixItem;
 
 
 

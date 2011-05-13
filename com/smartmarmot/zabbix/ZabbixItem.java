@@ -17,7 +17,7 @@
  * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.smartmarmot.orabbix;
+package com.smartmarmot.zabbix;
 
 public final class ZabbixItem {
 

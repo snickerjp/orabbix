@@ -40,11 +40,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.smartmarmot.orabbix.Constants;
+import com.smartmarmot.common.db.DBConn;
 
 public class Configurator {
 	private static Properties _props;
-	private static Properties _propsq;
 
 	protected static Properties getPropsFromFile(String _filename) {
 		try {
@@ -63,7 +62,7 @@ public class Configurator {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logThis(Level.ERROR, "Error on Configurator getPropsFromFile("
+			logThis(Level.ERROR, "Error on Configurator reading properties file getPropsFromFile("
 					+ _filename + ") " + e.getMessage());
 			return null;
 		}
@@ -97,7 +96,7 @@ public class Configurator {
 			return queries;
 		} catch (Exception ex) {
 
-			logThis(Level.ERROR, "Error on Configurator on getQueries("
+			logThis(Level.ERROR, "Error on Configurator on reading properties file "+ _propsq.toString() +" getQueries("
 					+ parameter + "," + _propsq.toString() + ") "
 					+ ex.getMessage());
 			return null;
@@ -336,7 +335,7 @@ public class Configurator {
 	}
 
 	private static void verifyConfig() {
-		if (_props == null || _propsq == null) {
+		if (_props == null ) {
 			throw new IllegalArgumentException("empty properties");
 		}
 
@@ -344,11 +343,13 @@ public class Configurator {
 
 	public Configurator(String _url) throws IOException {
 		Properties props = new Properties();
-		Properties propsq = new Properties();
-		FileInputStream fis, fisq;
+		
+		FileInputStream fis;
 		try {
 			try {
-				fis = new FileInputStream(new java.io.File(_url.toString()));
+				File configFile = new File(_url);
+				fis = new FileInputStream(new java.io.File(configFile
+						.getAbsoluteFile().getCanonicalPath()));
 				props.load(fis);
 				fis.close();
 			} catch (Exception e) {
@@ -356,20 +357,7 @@ public class Configurator {
 						"Error on Configurator while retriving configuration file "
 								+ _url + " " + e.getMessage());
 			}
-			try {
-				String prpq = new String(props
-						.getProperty(Constants.QUERY_LIST_FILE));
-				fisq = new FileInputStream(new java.io.File(prpq));
-				propsq.load(fisq);
-				fisq.close();
-			} catch (Exception e) {
-				logThis(Level.ERROR,
-						"Error on Configurator while retriving query file "
-								+ Constants.QUERY_LIST_FILE + " "
-								+ e.getMessage());
-			}
 			_props = props;
-			_propsq = propsq;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logThis(Level.ERROR, "Error on Configurator " + e.getMessage());
@@ -697,8 +685,8 @@ public class Configurator {
 			return propsq;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logThis(Level.ERROR, "Error on Configurator getQueryProp(" + dbname
-					+ ") " + e.getMessage());
+			logThis(Level.ERROR, "Error on Configurator getting "+Constants.QUERY_LIST_FILE +" " + dbname
+					+ e.getMessage());
 			return null;
 		}
 	}
@@ -785,8 +773,8 @@ public class Configurator {
 				return true;
 			}
 		} catch (Exception ex) {
-			logThis(Level.ERROR, "Error on Configurator on hasQueryFile("
-					+ dbName + ") " + ex.getMessage());
+			logThis(Level.ERROR, "Error on Configurator getting"+ Constants.QUERY_LIST_FILE
+					+ dbName + ex.getMessage());
 			return false;
 		}
 		return false;

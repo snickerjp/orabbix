@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.smartmarmot.orabbix;
+package com.smartmarmot.common.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,6 +28,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.log4j.Level;
+
+import com.smartmarmot.orabbix.Configurator;
+import com.smartmarmot.orabbix.Constants;
+import com.smartmarmot.orabbix.Query;
+import com.smartmarmot.orabbix.Sender;
+import com.smartmarmot.zabbix.ZabbixItem;
 
 public class DBJob implements Runnable {
 	private final SharedPoolDataSource _spds;
@@ -82,7 +88,7 @@ public class DBJob implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Configurator.logThis(Level.DEBUG, "Database "
-					+ this._dbname + " is alive");
+					+ this._dbname + " is not alive");
 			return false;
 		}
 	}
@@ -122,13 +128,16 @@ public class DBJob implements Runnable {
 				dbConn.close();
 			} else{
 				BlockingQueue<ZabbixItem> _queue = new LinkedBlockingQueue<ZabbixItem>();
+				_queue.offer(new ZabbixItem("alive", "0",this._dbname));
+				_queue.offer(new ZabbixItem(Constants.PROJECT_NAME+"Version", Constants.BANNER,this._dbname));
 				for (int cnt = 0; cnt < this._queries.length; cnt++) {
 					_queue.offer(new ZabbixItem(_queries[cnt].getName(),
 							_queries[cnt].getNoData(),_dbname));
-					Sender sender = new Sender(_queue, _zabbixServers,
-							_dbname);
-					sender.run();
+					
 				}
+				Sender sender = new Sender(_queue, _zabbixServers,
+						_dbname);
+				sender.run();
 			}
 			} catch (Exception e) {
 				Configurator.logThis(Level.ERROR, "Error on dbJob for database "
