@@ -38,7 +38,7 @@ import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+
 
 import com.smartmarmot.common.SmartLogger;
 import com.smartmarmot.common.db.DBConn;

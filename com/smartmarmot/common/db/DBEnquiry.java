@@ -32,7 +32,6 @@ import java.util.Date;
 import org.apache.log4j.Level;
 
 import com.smartmarmot.common.SmartLogger;
-import com.smartmarmot.orabbix.Configurator;
 import com.smartmarmot.orabbix.Constants;
 import com.smartmarmot.orabbix.Query;
 import com.smartmarmot.zabbix.ZabbixItem;
@@ -53,9 +52,6 @@ public class DBEnquiry {
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int numColumns = rsmd.getColumnCount();
 			while (rs.next()) {
-				// System.out.println(_queries[i].getSQL());
-				// System.out.println(_queries[i].getName());
-				// tempStr=rs.getObject(1).toString().trim();
 				for (int r = 1; r < numColumns + 1; r++) {
 					Integer tmpInteger = new Integer(r);
 					if (!_excludeColumns.contains(tmpInteger)) {

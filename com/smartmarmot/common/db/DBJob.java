@@ -21,7 +21,7 @@ package com.smartmarmot.common.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+
 import java.util.Hashtable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,7 +30,6 @@ import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.log4j.Level;
 
 import com.smartmarmot.common.SmartLogger;
-import com.smartmarmot.orabbix.Configurator;
 import com.smartmarmot.orabbix.Constants;
 import com.smartmarmot.orabbix.Query;
 import com.smartmarmot.orabbix.Sender;
