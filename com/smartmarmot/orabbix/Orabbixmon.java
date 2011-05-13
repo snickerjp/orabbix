@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.log4j.Level;
 
+import com.smartmarmot.common.SmartLogger;
 import com.smartmarmot.common.db.DBConn;
 import com.smartmarmot.common.db.DBJob;
 
@@ -42,7 +43,7 @@ public class Orabbixmon implements Runnable {
 	public Orabbixmon(String _cfgfile) {
 		try {
 			configFile = _cfgfile;
-			Configurator.logThis(Level.INFO, "Starting " + Constants.BANNER);
+			SmartLogger.logThis(Level.INFO, "Starting " + Constants.BANNER);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -68,20 +69,20 @@ public class Orabbixmon implements Runnable {
 			try {
 				cfg = new Configurator(configFile);
 			} catch (Exception e) {
-				Configurator.logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error while creating configurator with " + configFile
 								+ " " + e);
 			}
 			RuntimeMXBean rmxb = ManagementFactory.getRuntimeMXBean();
 			String pid = rmxb.getName();
-			Configurator.logThis(Level.INFO, Constants.PROJECT_NAME
+			SmartLogger.logThis(Level.INFO, Constants.PROJECT_NAME
 					+ " started with pid:" + pid.split("@")[0].toString());
 			// System.out.print("pid: "+pid.split("@")[0].toString());
 			String pidfile = cfg.getPidFile();
 			try {
 				Utility.writePid(pid.split("@")[0].toString(), pidfile);
 			} catch (Exception e) {
-				Configurator.logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error while trying to write pidfile " + e);
 			}
 
@@ -90,12 +91,12 @@ public class Orabbixmon implements Runnable {
 			DBConn[] myDBConn = cfg.getConnections();
 
 			if (myDBConn == null) {
-				Configurator.logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"ERROR on main - Connections is null");
 						throw new Exception("ERROR on main - Connections is null");
 						
 			} else if (myDBConn.length == 0) {
-				Configurator.logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"ERROR on main - Connections is empty");
 						throw new Exception("ERROR on main - Connections is empty");
 			}
@@ -107,7 +108,7 @@ public class Orabbixmon implements Runnable {
 			try {
 				maxThread = cfg.getMaxThread();
 			} catch (Exception e) {
-				Configurator.logThis(Level.WARN,
+				SmartLogger.logThis(Level.WARN,
 						"MaxThread not defined calculated maxThread = "
 								+ myDBConn.length * 3);
 			}
@@ -185,7 +186,7 @@ public class Orabbixmon implements Runnable {
 
 					Hashtable<String, Integer> zabbixServers = c
 							.getZabbixServers();
-					Configurator.logThis(
+					SmartLogger.logThis(
 							Level.DEBUG,
 							"Ready to run DBJob for dbname ->"
 									+ myDBConn[i].getName());
@@ -195,7 +196,7 @@ public class Orabbixmon implements Runnable {
 
 				}// for (int i = 0; i < myDBConn.length; i++) {
 				Thread.sleep(60 * 1000);
-				Configurator.logThis(Level.DEBUG, "Waking up Goood Morning");
+				SmartLogger.logThis(Level.DEBUG, "Waking up Goood Morning");
 			}
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block

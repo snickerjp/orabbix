@@ -31,6 +31,7 @@ import java.util.Date;
 
 import org.apache.log4j.Level;
 
+import com.smartmarmot.common.SmartLogger;
 import com.smartmarmot.orabbix.Configurator;
 import com.smartmarmot.orabbix.Constants;
 import com.smartmarmot.orabbix.Query;
@@ -74,12 +75,12 @@ public class DBEnquiry {
 				if (rs != null)
 					rs.close();
 			} catch (Exception ex) {
-				Configurator.logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error on DBEnquiry while closing resultset "
 						+ ex.getMessage() + " on database=" + dbName);
 			}
 		} catch (Exception ex) {
-			Configurator.logThis(Level.WARN,
+			SmartLogger.logThis(Level.WARN,
 					"Error while executing ->"
 					+ queryName 
 					+ "- on database ->"
@@ -125,7 +126,7 @@ public class DBEnquiry {
 						_queries[i].setNextrun(newNextRun);
 
 						datetime = dateFormat.format(_queries[i].getNextrun());
-						Configurator.logThis(Level.DEBUG, "Actual query is "
+						SmartLogger.logThis(Level.DEBUG, "Actual query is "
 								+ _queries[i].getName() + "Nextrun " + datetime
 								+ " on database=" + dbname + " Period="
 								+ _queries[i].getPeriod());
@@ -137,7 +138,7 @@ public class DBEnquiry {
 						String result = "";
 						if (_queries[i].getRaceQuery() != null) {
 							if (_queries[i].getRaceQuery().length() > 0) {
-								Configurator.logThis(Level.DEBUG, "INFO:"
+								SmartLogger.logThis(Level.DEBUG, "INFO:"
 										+ _queries[i].getName()
 										+ " RaceCondiftionQuery ->"
 										+ _queries[i].getRaceQuery());
@@ -183,7 +184,7 @@ public class DBEnquiry {
 							ZabbixItem zitem = new ZabbixItem(_queries[i]
 									.getName(), result,dbname);
 							SZItems.add(zitem);
-							Configurator.logThis(Level.DEBUG,
+							SmartLogger.logThis(Level.DEBUG,
 									"I'm going to return " + result
 											+ " for query "
 											+ _queries[i].getName()
@@ -193,7 +194,7 @@ public class DBEnquiry {
 
 				}
 			} catch (Exception ex) {
-				Configurator.logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error on DBEnquiry on query=" + _queries[i].getName()
 						+ " on database=" + dbname
 						+ " Error returned is " + ex);
@@ -207,7 +208,7 @@ public class DBEnquiry {
 				ZabbixItem zitem = new ZabbixItem(_queries[i].getName(),
 						tempStr , dbname);
 				SZItems.add(zitem);
-				Configurator.logThis(Level.DEBUG, "I'm going to return "
+				SmartLogger.logThis(Level.DEBUG, "I'm going to return "
 						+ tempStr + " for query " + _queries[i].getName()
 						+ " on database=" + dbname);
 			}
@@ -217,7 +218,7 @@ public class DBEnquiry {
 			if (!con.isClosed())
 				con.close();
 		} catch (Exception ex) {
-			Configurator.logThis(Level.ERROR,
+			SmartLogger.logThis(Level.ERROR,
 					"Error on DBEnquiry while closing connection "
 					+ ex.getMessage() + " on database=" + dbname);
 		}

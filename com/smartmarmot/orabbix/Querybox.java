@@ -20,6 +20,8 @@ package com.smartmarmot.orabbix;
 
 import org.apache.log4j.Level;
 
+import com.smartmarmot.common.SmartLogger;
+
 public class Querybox {
 	private Query[] _query;
 	private String _dbname;
@@ -37,7 +39,7 @@ public class Querybox {
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Configurator.logThis(Level.ERROR, "Error on QueryBox "
+			SmartLogger.logThis(Level.ERROR, "Error on QueryBox "
 					+ e.getMessage());
 		}
 

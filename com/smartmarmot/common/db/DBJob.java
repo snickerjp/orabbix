@@ -29,6 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.apache.log4j.Level;
 
+import com.smartmarmot.common.SmartLogger;
 import com.smartmarmot.orabbix.Configurator;
 import com.smartmarmot.orabbix.Constants;
 import com.smartmarmot.orabbix.Query;
@@ -81,7 +82,7 @@ public class DBJob implements Runnable {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Configurator.logThis(Level.DEBUG, "Database "
+			SmartLogger.logThis(Level.DEBUG, "Database "
 					+ this._dbname + " is not alive");
 			return false;
 		}
@@ -89,7 +90,7 @@ public class DBJob implements Runnable {
 
 	public void run() {
 
-		Configurator.logThis(Level.DEBUG, "Starting dbJob on database "
+		SmartLogger.logThis(Level.DEBUG, "Starting dbJob on database "
 				+ _dbname + " " + _queriesGroup);
 		final long start = System.currentTimeMillis();
 
@@ -104,14 +105,14 @@ public class DBJob implements Runnable {
 				ZabbixItem[] zitems = DBEnquiry.execute(this._queries,
 						dbConn, this._dbname);
 				if (zitems != null && zitems.length > 0) {
-					Configurator.logThis(Level.DEBUG, "Item retrieved "
+					SmartLogger.logThis(Level.DEBUG, "Item retrieved "
 							+ zitems.length + " on database " + this._dbname);
 					for (int cnt = 0; cnt < zitems.length; cnt++) {
 						String zItemName = zitems[cnt].getKey();
 						if (this._dgNum > 0) {
 							zItemName = zItemName + "_" + _dgNum;
 						}
-						Configurator.logThis(Level.DEBUG, "dbname " + this._dbname
+						SmartLogger.logThis(Level.DEBUG, "dbname " + this._dbname
 								+ " sending item  " + zitems[cnt].getKey()
 								+ " value " + zitems[cnt].getValue());
 						_queue.offer(new ZabbixItem(zItemName, zitems[cnt]
@@ -137,13 +138,13 @@ public class DBJob implements Runnable {
 				sender.run();
 			}
 			} catch (Exception e) {
-				Configurator.logThis(Level.ERROR, "Error on dbJob for database "
+				SmartLogger.logThis(Level.ERROR, "Error on dbJob for database "
 						+ _dbname + " " + _queriesGroup + " error: " + e);
 			} finally {
 				if (_queries != null)
 					_queries = null;
 			}
-			Configurator.logThis(Level.INFO, "Done with dbJob on database "
+			SmartLogger.logThis(Level.INFO, "Done with dbJob on database "
 					+ _dbname + " " + _queriesGroup + " elapsed time "
 					+ (System.currentTimeMillis() - start) + " ms");
 		}

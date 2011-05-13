@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.smartmarmot.common.SmartLogger;
 import com.smartmarmot.zabbix.ZabbixItem;
 /**
  * A daemon thread that waits for and forwards data items to a Zabbix server.
@@ -112,7 +113,7 @@ public final class Sender implements Runnable {
 	                	send(item.getKey(), item.getValue());
 	                	break;
 	                	}catch (Exception e){
-					Configurator.logThis(Level.WARN,
+	                		SmartLogger.logThis(Level.WARN,
 							"Warning while sending item " + item.getKey()
 									+ " value " + item.getValue() + " on host "
 									+ host + " retry number " + retryCount
@@ -120,7 +121,7 @@ public final class Sender implements Runnable {
 	                		Thread.sleep(1000);
 	                		retryCount++;
 	                		 if (retryCount==retryNumber){
-						Configurator.logThis(Level.WARN,
+	                			 SmartLogger.logThis(Level.WARN,
 								"Error i didn't sent item " + item.getKey()
 										+ " on Zabbix server " + " on host "
 										+ host + " tried " + retryCount
@@ -151,7 +152,7 @@ public final class Sender implements Runnable {
             		send(item.getKey(), item.getValue());
             		break;
             	} catch (Exception e) {
-					Configurator.logThis(Level.WARN,
+            		SmartLogger.logThis(Level.WARN,
 							"Warning while sending item " + item.getKey()
 									+ " on host " + host + " retry number "
 									+ retryCount + " error:" + e);
@@ -161,7 +162,7 @@ public final class Sender implements Runnable {
            	
             }
             if (retryCount==retryNumber){
-				Configurator.logThis(Level.WARN, "Error i didn't sent item "
+            	SmartLogger.logThis(Level.WARN, "Error i didn't sent item "
 						+ item.getKey() + "  on host " + host + " tried "
 						+ retryCount);
             }
@@ -199,7 +200,7 @@ public final class Sender implements Runnable {
         message.append(tail);
 
         if (log.isDebugEnabled()) {
-        	Configurator.logThis(Level.DEBUG,"sending " + message);
+        	SmartLogger.logThis(Level.DEBUG,"sending " + message);
         }
 
         Socket zabbix = null;
@@ -222,17 +223,17 @@ public final class Sender implements Runnable {
 	            in = zabbix.getInputStream();
 	            final int read = in.read(response);
 	            if (log.isDebugEnabled()) {
-					Configurator.logThis(Level.DEBUG, "received "
+	            	SmartLogger.logThis(Level.DEBUG, "received "
 							+ new String(response));
 	            }
 	            if (read != 2 || response[0] != 'O' || response[1] != 'K') {
-					Configurator.logThis(Level.WARN,
+	            	SmartLogger.logThis(Level.WARN,
 							"received unexpected response '"
 									+ new String(response) + "' for key '"
 									+ key + "'");
 	            }
 	        } catch (Exception ex){
-				Configurator.logThis(Level.ERROR,
+	        	SmartLogger.logThis(Level.ERROR,
 						"Error contacting Zabbix server " + zabbixServer
 								+ "  on port "
 								+ zabbixServers.get(zabbixServer));

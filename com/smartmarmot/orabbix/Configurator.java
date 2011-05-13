@@ -40,6 +40,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.smartmarmot.common.SmartLogger;
 import com.smartmarmot.common.db.DBConn;
 
 public class Configurator {
@@ -55,14 +56,14 @@ public class Configurator {
 				fisq = new FileInputStream(new java.io.File(queryFile
 						.getAbsoluteFile().getCanonicalPath()));
 				queryFile = null;
-				logThis(Level.DEBUG, "Loaded the properties from " + _filename);
+				SmartLogger.logThis(Level.DEBUG, "Loaded the properties from " + _filename);
 				propsq.load(fisq);
 				fisq.close();
 				return propsq;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logThis(Level.ERROR, "Error on Configurator reading properties file getPropsFromFile("
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator reading properties file getPropsFromFile("
 					+ _filename + ") " + e.getMessage());
 			return null;
 		}
@@ -96,7 +97,7 @@ public class Configurator {
 			return queries;
 		} catch (Exception ex) {
 
-			logThis(Level.ERROR, "Error on Configurator on reading properties file "+ _propsq.toString() +" getQueries("
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator on reading properties file "+ _propsq.toString() +" getQueries("
 					+ parameter + "," + _propsq.toString() + ") "
 					+ ex.getMessage());
 			return null;
@@ -113,7 +114,7 @@ public class Configurator {
 				query = new String(_propsq.getProperty(_queryName + "."
 						+ Constants.QUERY_POSTFIX));
 			} catch (Exception ex) {
-				logThis(Level.ERROR, "Error while getting " + _queryName + "."
+				SmartLogger.logThis(Level.ERROR, "Error while getting " + _queryName + "."
 						+ Constants.QUERY_POSTFIX + " " + ex.getMessage());
 			}
 
@@ -122,7 +123,7 @@ public class Configurator {
 				noDataFound = new String(_propsq.getProperty(_queryName + "."
 						+ Constants.QUERY_NO_DATA_FOUND));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.QUERY_NO_DATA_FOUND
 						+ " null or not present " + ex.getMessage());
 			}
@@ -131,7 +132,7 @@ public class Configurator {
 				raceCondQuery = new String(_propsq.getProperty(_queryName + "."
 						+ Constants.RACE_CONDITION_QUERY));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.RACE_CONDITION_QUERY
 						+ " null or not present " + ex.getMessage());
 			}
@@ -140,7 +141,7 @@ public class Configurator {
 				raceCondValue = new String(_propsq.getProperty(_queryName + "."
 						+ Constants.RACE_CONDITION_VALUE));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.RACE_CONDITION_VALUE
 						+ " null or not present " + ex.getMessage());
 			}
@@ -152,10 +153,10 @@ public class Configurator {
 				period = new Integer(_propsq.getProperty(_queryName + "."
 						+ Constants.QUERY_PERIOD));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.QUERY_PERIOD
 						+ " null or not present " + ex.getMessage());
-				logThis(Level.DEBUG, "Note: " + _queryName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_PERIOD
 						+ " null or not present using default values 5 min.");
 				period = 5;
@@ -171,10 +172,10 @@ public class Configurator {
 					}
 				}
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.QUERY_ACTIVE
 						+ " null or not present " + ex.getMessage());
-				logThis(Level.DEBUG, "Note: " + _queryName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_ACTIVE
 						+ " null or not present using default values TRUE");
 			}
@@ -189,10 +190,10 @@ public class Configurator {
 					}
 				}
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_TRIM + " null or not present "
 						+ ex.getMessage());
-				logThis(Level.DEBUG, "Note: " + _queryName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_TRIM
 						+ " null or not present using default values TRUE");
 			}
@@ -207,10 +208,10 @@ public class Configurator {
 					}
 				}
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_SPACE + " null or not present "
 						+ ex.getMessage());
-				logThis(Level.DEBUG, "Note: " + _queryName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_SPACE
 						+ " null or not present using default values TRUE");
 			}
@@ -229,7 +230,7 @@ public class Configurator {
 					excludeColumns.add(tmpInteger);
 				}
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.QUERY_EXCLUDE_COLUMNS + " error "
 						+ ex.getMessage());
 			}
@@ -248,7 +249,7 @@ public class Configurator {
 					excludeColumns.add(tmpInteger);
 				}
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + _queryName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
 						+ Constants.RACE_CONDITION_EXCLUDE_COLUMNS + " error "
 						+ ex.getMessage());
 			}
@@ -261,19 +262,12 @@ public class Configurator {
 			return q;
 		} catch (Exception ex) {
 
-			logThis(Level.ERROR, "Error on Configurator on getQueryProperties("
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator on getQueryProperties("
 					+ _propsq.toString() + ") " + ex.getMessage());
 			return null;
 		}
 	}
 
-	public static void logThis(Level level, String message) {
-		Logger logger = Logger.getLogger(Constants.PROJECT_NAME);
-		if (message == null) {
-			message = new String("");
-		}
-		logger.log(level, message);
-	}
 
 	protected static Query[] refresh(Query[] _myquery, String _prpFile) {
 		Properties _prp = getPropsFromFile(_prpFile);
@@ -283,7 +277,7 @@ public class Configurator {
 						.getName());
 				if (!_myquery[i].getSQL().equalsIgnoreCase(qnew.getSQL())) {
 					_myquery[i].setSql(qnew.getSQL());
-					logThis(Level.INFO, "Statement changed on query "
+					SmartLogger.logThis(Level.INFO, "Statement changed on query "
 							+ _myquery[i].getName() + " new statement ->"
 							+ qnew.getSQL());
 				}
@@ -293,7 +287,7 @@ public class Configurator {
 								.getActive().equals(true))) {
 
 					_myquery[i].setActive(qnew.getActive());
-					logThis(Level.INFO, "Status of query "
+					SmartLogger.logThis(Level.INFO, "Status of query "
 							+ _myquery[i].getName() + " has changed ->"
 							+ qnew.getActive());
 				}
@@ -305,27 +299,27 @@ public class Configurator {
 								+ (qnew.getPeriod() * 1000 * 60));
 						_myquery[i].setNextrun(newNextRun);
 					}
-					logThis(Level.INFO, "Period of query "
+					SmartLogger.logThis(Level.INFO, "Period of query "
 							+ _myquery[i].getName() + " has changed ->"
 							+ qnew.getPeriod());
 				}
 				if (!_myquery[i].getRaceQuery().equalsIgnoreCase(
 						qnew.getRaceQuery())) {
 					_myquery[i].setRaceQuery(qnew.getRaceQuery());
-					logThis(Level.INFO, "RaceQuery for query "
+					SmartLogger.logThis(Level.INFO, "RaceQuery for query "
 							+ _myquery[i].getName() + " has changed ->"
 							+ qnew.getRaceQuery());
 				}
 				if (!_myquery[i].getRaceValue().equalsIgnoreCase(
 						qnew.getRaceValue())) {
 					_myquery[i].setRaceQuery(qnew.getRaceQuery());
-					logThis(Level.INFO, "RaceValue of query "
+					SmartLogger.logThis(Level.INFO, "RaceValue of query "
 							+ _myquery[i].getName() + " has changed ->"
 							+ qnew.getRaceValue());
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error on Configurator while getting getQueryProperties( "
 								+ _prp + " , " + _myquery[i].getName()
 								+ ") Error " + e.getMessage());
@@ -353,14 +347,14 @@ public class Configurator {
 				props.load(fis);
 				fis.close();
 			} catch (Exception e) {
-				logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error on Configurator while retriving configuration file "
 								+ _url + " " + e.getMessage());
 			}
 			_props = props;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logThis(Level.ERROR, "Error on Configurator " + e.getMessage());
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator " + e.getMessage());
 		}
 	}
 
@@ -368,13 +362,13 @@ public class Configurator {
 		try {
 			verifyConfig();
 
-			logThis(Level.DEBUG, "getConnection for database " + dbName);
+			SmartLogger.logThis(Level.DEBUG, "getConnection for database " + dbName);
 			String url = "";
 			try {
 				url = new String(_props.getProperty(dbName + "."
 						+ Constants.CONN_URL));
 			} catch (Exception ex) {
-				logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error on Configurator getConnection while getting "
 								+ dbName + "." + Constants.CONN_URL + " "
 								+ ex.getMessage());
@@ -385,7 +379,7 @@ public class Configurator {
 				uname = new String(_props.getProperty(dbName + "."
 						+ Constants.CONN_USERNAME));
 			} catch (Exception ex) {
-				logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error on Configurator getConnection while getting "
 								+ dbName + "." + Constants.CONN_USERNAME + " "
 								+ ex.getMessage());
@@ -395,7 +389,7 @@ public class Configurator {
 				password = new String(_props.getProperty(dbName + "."
 						+ Constants.CONN_PASSWORD));
 			} catch (Exception ex) {
-				logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error on Configurator getConnection while getting "
 								+ dbName + "." + Constants.CONN_PASSWORD + " "
 								+ ex.getMessage());
@@ -413,17 +407,17 @@ public class Configurator {
 				maxActive = new Integer(_props.getProperty(dbName + "."
 						+ Constants.CONN_MAX_ACTIVE));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + dbName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
 						+ Constants.CONN_MAX_ACTIVE + " " + ex.getMessage());
 				try {
 					maxActive = new Integer(_props
 							.getProperty(Constants.DATABASES_LIST + "."
 									+ Constants.CONN_MAX_ACTIVE));
 				} catch (Exception e) {
-					logThis(Level.WARN, "Note: "
+					SmartLogger.logThis(Level.WARN, "Note: "
 							+ Constants.DATABASES_LIST + "."
 							+ Constants.CONN_MAX_ACTIVE + " " + e.getMessage());
-					logThis(Level.WARN, "Warning I will use default value "
+					SmartLogger.logThis(Level.WARN, "Warning I will use default value "
 							+ maxActive);
 				}
 			}
@@ -433,17 +427,17 @@ public class Configurator {
 				maxWait = new Integer(_props.getProperty(dbName + "."
 						+ Constants.CONN_MAX_WAIT));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + dbName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
 						+ Constants.CONN_MAX_WAIT + " " + ex.getMessage());
 				try {
 					maxWait = new Integer(_props
 							.getProperty(Constants.DATABASES_LIST + "."
 									+ Constants.CONN_MAX_WAIT));
 				} catch (Exception e) {
-					logThis(Level.WARN, "Note: "
+					SmartLogger.logThis(Level.WARN, "Note: "
 							+ Constants.DATABASES_LIST + "."
 							+ Constants.CONN_MAX_WAIT + " " + e.getMessage());
-					logThis(Level.WARN, "Warning I will use default value "
+					SmartLogger.logThis(Level.WARN, "Warning I will use default value "
 							+ maxWait);
 				}
 			}
@@ -453,30 +447,30 @@ public class Configurator {
 				maxIdle = new Integer(_props.getProperty(dbName + "."
 						+ Constants.CONN_MAX_IDLE));
 			} catch (Exception ex) {
-				logThis(Level.DEBUG, "Note: " + dbName + "."
+				SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
 						+ Constants.CONN_MAX_IDLE + " " + ex.getMessage());
 				try {
 					maxIdle = new Integer(_props
 							.getProperty(Constants.DATABASES_LIST + "."
 									+ Constants.CONN_MAX_IDLE));
 				} catch (Exception e) {
-					logThis(Level.WARN, "Note: "
+					SmartLogger.logThis(Level.WARN, "Note: "
 							+ Constants.DATABASES_LIST + "."
 							+ Constants.CONN_MAX_IDLE + " " + e.getMessage());
-					logThis(Level.WARN, "Warning I will use default value "
+					SmartLogger.logThis(Level.WARN, "Warning I will use default value "
 							+ maxIdle);
 				}
 			}
 			tds.setMaxIdle(maxIdle.intValue());
 			
-			logThis( Level.INFO,"DB Pool created: " + tds);
-    		logThis( Level.INFO, "URL=" + url.toString() );
-    		logThis( Level.INFO, "maxPoolSize=" + tds.getMaxActive() );
-    		logThis( Level.INFO, "maxIdleSize=" + tds.getMaxIdle() );
-    		logThis( Level.INFO, "maxIdleTime=" + tds.getMinEvictableIdleTimeMillis() + "ms" );
-    		logThis( Level.INFO, "poolTimeout=" + tds.getMaxWait() );
-    		logThis( Level.INFO, "timeBetweenEvictionRunsMillis=" + tds.getTimeBetweenEvictionRunsMillis() );
-    		logThis( Level.INFO, "numTestsPerEvictionRun=" + tds.getNumTestsPerEvictionRun() );
+			SmartLogger.logThis( Level.INFO,"DB Pool created: " + tds);
+    		SmartLogger.logThis( Level.INFO, "URL=" + url.toString() );
+    		SmartLogger.logThis( Level.INFO, "maxPoolSize=" + tds.getMaxActive() );
+    		SmartLogger.logThis( Level.INFO, "maxIdleSize=" + tds.getMaxIdle() );
+    		SmartLogger.logThis( Level.INFO, "maxIdleTime=" + tds.getMinEvictableIdleTimeMillis() + "ms" );
+    		SmartLogger.logThis( Level.INFO, "poolTimeout=" + tds.getMaxWait() );
+    		SmartLogger.logThis( Level.INFO, "timeBetweenEvictionRunsMillis=" + tds.getTimeBetweenEvictionRunsMillis() );
+    		SmartLogger.logThis( Level.INFO, "numTestsPerEvictionRun=" + tds.getNumTestsPerEvictionRun() );
 			
     		
 			tds.setValidationQuery(Constants.ORACLE_VALIDATION_QUERY);
@@ -494,7 +488,7 @@ public class Configurator {
 					tempStr = tempStr + rs.getObject(r).toString().trim();
 				}
 			}
-			logThis(Level.INFO, "Connected as " + tempStr);
+			SmartLogger.logThis(Level.INFO, "Connected as " + tempStr);
 
 			con.close();
 			con = null;
@@ -509,14 +503,14 @@ public class Configurator {
 					tempStr = tempStr + rs.getObject(r).toString().trim();
 				}
 			}
-			logThis(Level.INFO, "--------- on Database -> " + tempStr);
+			SmartLogger.logThis(Level.INFO, "--------- on Database -> " + tempStr);
 			con.close();
 			con = null;
 			DBConn mydbconn = new DBConn(tds, dbName.toString());
 			return mydbconn;
 
 		} catch (Exception ex) {
-			logThis(Level.ERROR, "Error on Configurator for database " + dbName
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator for database " + dbName
 					+ " -->" + ex.getMessage());
 			return null;
 		}
@@ -532,14 +526,14 @@ public class Configurator {
 				if (dbc!=null){
 					connections.add(dbc);
 				}else {
-	        		 logThis(Level.INFO,"This Database "+DatabaseList[i]+" removed");       	
+	        		 SmartLogger.logThis(Level.INFO,"This Database "+DatabaseList[i]+" removed");       	
 	        	}
 			}
 			// fis.close();
 			DBConn[] connArray = (DBConn[]) connections.toArray(new DBConn[0]);
 			return connArray;
 		} catch (Exception ex) {
-			logThis(Level.ERROR, "Error on Configurator getConnections "
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator getConnections "
 					+ ex.getMessage());
 			return null;
 		}
@@ -553,7 +547,7 @@ public class Configurator {
 				dblist = new String(_props
 						.getProperty(Constants.DATABASES_LIST));
 			} catch (Exception e) {
-				logThis(Level.ERROR,
+				SmartLogger.logThis(Level.ERROR,
 						"Error on Configurator while retriving the databases list "
 								+ Constants.DATABASES_LIST + " " + e);
 			}
@@ -570,7 +564,7 @@ public class Configurator {
 			// fisdb.close();
 			return DatabaseList;
 		} catch (Exception ex) {
-			logThis(Level.ERROR,
+			SmartLogger.logThis(Level.ERROR,
 					"Error on Configurator while retriving the databases list "
 							+ Constants.DATABASES_LIST + " " + ex);
 			return null;
@@ -583,7 +577,7 @@ public class Configurator {
 			return new Integer(_props
 					.getProperty(Constants.ORABBIX_DAEMON_THREAD));
 		} catch (Exception ex) {
-			logThis(Level.ERROR, "Error on Configurator while retriving the "
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator while retriving the "
 					+ Constants.ORABBIX_DAEMON_THREAD + " " + ex);
 			return null;
 		}
@@ -594,16 +588,16 @@ public class Configurator {
 			verifyConfig();
 			String _pidfile = new String(_props
 					.getProperty(Constants.ORABBIX_PIDFILE));
-			logThis(Level.INFO, "PidFile -> " + _pidfile);
+			SmartLogger.logThis(Level.INFO, "PidFile -> " + _pidfile);
 
 			if (_pidfile == "") {
-				logThis(Level.ERROR, "Error retrieving pidfile from " + _props);
+				SmartLogger.logThis(Level.ERROR, "Error retrieving pidfile from " + _props);
 			}
 			return _pidfile;
 
 		} catch (Exception ex) {
 
-			logThis(Level.ERROR, "Error on Configurator getPidFile " + ex);
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator getPidFile " + ex);
 			return null;
 		}
 	}
@@ -622,9 +616,9 @@ public class Configurator {
 						+ Constants.QUERY_LIST_FILE));
 			}
 		} catch (Exception ex) {
-			logThis(Level.ERROR, "Error on Configurator on getQueryFile("
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator on getQueryFile("
 					+ dbName + ") " + ex.getMessage());
-			logThis(Level.WARN, "I'm going to return getQueryFile() ");
+			SmartLogger.logThis(Level.WARN, "I'm going to return getQueryFile() ");
 			return getQueryFile();
 		}
 		return null;
@@ -645,7 +639,7 @@ public class Configurator {
 			fisq.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logThis(Level.ERROR, "Error on Configurator  while getting "
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator  while getting "
 					+ Constants.QUERY_LIST_FILE + " error -> " + e.getMessage());
 			return null;
 		}
@@ -664,14 +658,14 @@ public class Configurator {
 				fisq = new FileInputStream(new java.io.File(queryFile
 						.getAbsoluteFile().getCanonicalPath()));
 				queryFile = null;
-				logThis(Level.DEBUG, "Debug loaded the " + dbname + "."
+				SmartLogger.logThis(Level.DEBUG, "Debug loaded the " + dbname + "."
 						+ Constants.QUERY_LIST_FILE);
 				// fisq = new FileInputStream (new java.io.File(
 				// _props.getProperty(dbname+"."+Constants.QUERY_LIST_FILE)));
 			} else {
 				// fisq = new FileInputStream (new java.io.File(
 				// _props.getProperty(Constants.QUERY_LIST_FILE)));
-				logThis(Level.DEBUG, "Debug I'm loading the default "
+				SmartLogger.logThis(Level.DEBUG, "Debug I'm loading the default "
 						+ Constants.QUERY_LIST_FILE + " " + dbname
 						+ " don't have it's own");
 				File queryFile = new File(_props
@@ -685,7 +679,7 @@ public class Configurator {
 			return propsq;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logThis(Level.ERROR, "Error on Configurator getting "+Constants.QUERY_LIST_FILE +" " + dbname
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator getting "+Constants.QUERY_LIST_FILE +" " + dbname
 					+ e.getMessage());
 			return null;
 		}
@@ -697,7 +691,7 @@ public class Configurator {
 			return _props.getProperty(Constants.ZABBIX_SERVER_HOST);
 
 		} catch (Exception ex) {
-			logThis(Level.ERROR,
+			SmartLogger.logThis(Level.ERROR,
 					"Error on Configurator while retriving zabbix server host "
 							+ Constants.ZABBIX_SERVER_HOST + " or port "
 							+ Constants.ZABBIX_SERVER_PORT + " " + ex);
@@ -712,10 +706,10 @@ public class Configurator {
 					.getProperty(Constants.ZABBIX_SERVER_PORT));
 			return port.intValue();
 		} catch (Exception ex) {
-			logThis(Level.ERROR,
+			SmartLogger.logThis(Level.ERROR,
 					"Error on Configurator while retriving zabbix server port "
 							+ Constants.ZABBIX_SERVER_PORT + " " + ex);
-			logThis(Level.WARN, "I will use the default port "
+			SmartLogger.logThis(Level.WARN, "I will use the default port "
 					+ Constants.ZABBIX_SERVER_DEFAULT_PORT);
 			return Constants.ZABBIX_SERVER_DEFAULT_PORT;
 		}
@@ -727,7 +721,7 @@ public class Configurator {
 			zxblist = new String(_props
 					.getProperty(Constants.ZABBIX_SERVER_LIST));
 		} catch (Exception e) {
-			logThis(Level.ERROR, "Error on getZabbixServers while getting "
+			SmartLogger.logThis(Level.ERROR, "Error on getZabbixServers while getting "
 					+ Constants.ZABBIX_SERVER_LIST + " " + e.getMessage());
 		}
 		StringTokenizer st = new StringTokenizer(zxblist, Constants.DELIMITER);
@@ -740,7 +734,7 @@ public class Configurator {
 				server = new String(_props.getProperty(token + "."
 						+ Constants.ZABBIX_SERVER_HOST));
 			} catch (Exception e) {
-				logThis(Level.ERROR, "Error on getZabbixServers while getting "
+				SmartLogger.logThis(Level.ERROR, "Error on getZabbixServers while getting "
 						+ token + "." + Constants.ZABBIX_SERVER_HOST + " "
 						+ e.getMessage());
 			}
@@ -749,11 +743,11 @@ public class Configurator {
 				port = new Integer(_props.getProperty(token + "."
 						+ Constants.ZABBIX_SERVER_PORT));
 			} catch (Exception e) {
-				logThis(Level.WARN,
+				SmartLogger.logThis(Level.WARN,
 						"Warning on getZabbixServers while getting " + token
 								+ "." + Constants.ZABBIX_SERVER_PORT + " "
 								+ e.getMessage());
-				logThis(Level.WARN, "Warning I will use the default port"
+				SmartLogger.logThis(Level.WARN, "Warning I will use the default port"
 						+ port);
 			}
 			ZabbixServers.put(server, port);
@@ -773,7 +767,7 @@ public class Configurator {
 				return true;
 			}
 		} catch (Exception ex) {
-			logThis(Level.ERROR, "Error on Configurator getting"+ Constants.QUERY_LIST_FILE
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator getting"+ Constants.QUERY_LIST_FILE
 					+ dbName + ex.getMessage());
 			return false;
 		}
@@ -791,7 +785,7 @@ public class Configurator {
 			}
 			return ArrayUtils.isEquals(localdblist, remotedblist);
 		} catch (Exception ex) {
-			logThis(Level.ERROR,
+			SmartLogger.logThis(Level.ERROR,
 					"Error on Configurator while comparing the databases lists on isEqualsDBList "
 							+ ex);
 			return false;
@@ -819,7 +813,7 @@ public class Configurator {
 					/*
 					 * adding database
 					 */
-					logThis(Level.INFO, "New database founded! "
+					SmartLogger.logThis(Level.INFO, "New database founded! "
 							+ localdblist[j]);
 					DBConn tmpDBConn = this.getConnection(localdblist[j]);
 					if (tmpDBConn != null) {
@@ -829,14 +823,14 @@ public class Configurator {
 			}
 			for (int x = 0; x < _dbc.length; x++) {
 				if (!ArrayUtils.contains(localdblist, _dbc[x].getName())) {
-					logThis(Level.WARN, "Database " + _dbc[x].getName()
+					SmartLogger.logThis(Level.WARN, "Database " + _dbc[x].getName()
 							+ " removed from configuration file");
 					/**
 					 * removing database
 					 */
 					// _dbc[x].closeAll();
 					_dbc[x].getSPDS().close();
-					logThis(Level.WARN, "Database " + _dbc[x].getName()
+					SmartLogger.logThis(Level.WARN, "Database " + _dbc[x].getName()
 							+ " conections closed");
 					_dbc[x] = null;
 				}
@@ -844,7 +838,7 @@ public class Configurator {
 			DBConn[] connArray = (DBConn[]) connections.toArray(new DBConn[0]);
 			return connArray;
 		} catch (Exception ex) {
-			logThis(Level.ERROR,
+			SmartLogger.logThis(Level.ERROR,
 					"Error on Configurator while retriving the databases list "
 							+ Constants.DATABASES_LIST + " error:" + ex);
 			return _dbc;
@@ -858,13 +852,13 @@ public class Configurator {
 			try{
 				sleep=new Integer(_props.getProperty(Constants.ORABBIX_DAEMON_SLEEP));
 			}catch (Exception e){
-				logThis(Level.WARN,"Warning while getting "+Constants.ORABBIX_DAEMON_SLEEP+" I will use the default "+sleep);
+				SmartLogger.logThis(Level.WARN,"Warning while getting "+Constants.ORABBIX_DAEMON_SLEEP+" I will use the default "+sleep);
 			}
 			return sleep;
 
 		} catch (Exception ex){
 
-			logThis(Level.ERROR,"Error on Configurator while retriving "+Constants.ORABBIX_DAEMON_SLEEP+" "+ex);
+			SmartLogger.logThis(Level.ERROR,"Error on Configurator while retriving "+Constants.ORABBIX_DAEMON_SLEEP+" "+ex);
 			return null;
 		}
 	}

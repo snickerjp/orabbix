@@ -26,6 +26,8 @@ import java.io.PrintStream;
 
 import org.apache.log4j.Level;
 
+import com.smartmarmot.common.SmartLogger;
+
 public class Utility {
 
 	public static void writePid(String _pid, String _pidfile) throws Exception {
@@ -42,7 +44,7 @@ public class Utility {
 			if (newTarget.exists()) {
 				boolean success = newTarget.delete();
 				if (!success) {
-					Configurator.logThis(Level.ERROR,
+					SmartLogger.logThis(Level.ERROR,
 							"Delete: deletion failed "
 									+ newTarget.getAbsolutePath());
 				}
@@ -57,7 +59,7 @@ public class Utility {
 		}
 		// Catches any error conditions
 		catch (IOException e) {
-			Configurator.logThis(Level.ERROR, "Unable to write to file "
+			SmartLogger.logThis(Level.ERROR, "Unable to write to file "
 					+ _pidfile + " error:" + e);
 		}
 
