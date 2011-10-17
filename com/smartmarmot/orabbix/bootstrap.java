@@ -19,14 +19,10 @@
  */
 
 package com.smartmarmot.orabbix;
-
-
-
-
-
-
+import com.smartmarmot.orabbix.Constants;
 
 public class bootstrap {
+
 
 	private static Orabbixmon runner;
 	public static void printUsage() {

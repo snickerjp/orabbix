@@ -17,7 +17,9 @@
  * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 package com.smartmarmot.orabbix;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +30,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
@@ -90,8 +91,14 @@ public class Configurator {
 
 			Collection<Query> Queries = new ArrayList<Query>();
 			for (int i = 0; i < QueryLists.length; i++) {
-				Query q = getQueryProperties(_propsq, QueryLists[i]);
-				Queries.add(q);
+				try {
+					Query q = getQueryProperties(_propsq, QueryLists[i]);
+					Queries.add(q);
+				}catch (Exception e1){
+					SmartLogger.logThis(Level.ERROR, "Error on Configurator on reading query "+QueryLists[i] +e1);
+					SmartLogger.logThis(Level.INFO, "Query "+QueryLists[i] +" skipped due to error " +e1);
+					
+				}
 			}
 			Query[] queries = (Query[]) Queries.toArray(new Query[0]);
 			return queries;
@@ -127,6 +134,15 @@ public class Configurator {
 						+ "." + Constants.QUERY_NO_DATA_FOUND
 						+ " null or not present " + ex.getMessage());
 			}
+			String whenNotAlive = "";
+			try {
+				whenNotAlive = new String(_propsq.getProperty(_queryName + "."
+						+ Constants.QUERY_WHEN_NOT_ALIVE));
+			} catch (Exception ex) {
+				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
+						+ "." + Constants.QUERY_WHEN_NOT_ALIVE
+						+ " null or not present " + ex.getMessage());
+			}
 			String raceCondQuery = "";
 			try {
 				raceCondQuery = new String(_propsq.getProperty(_queryName + "."
@@ -146,7 +162,7 @@ public class Configurator {
 						+ " null or not present " + ex.getMessage());
 			}
 			/**
-			 * set Period if not defined period =5 min.
+			 * set Period if not defined period =2 min.
 			 */
 			int period = -1;
 			try {
@@ -156,12 +172,15 @@ public class Configurator {
 				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.QUERY_PERIOD
 						+ " null or not present " + ex.getMessage());
-				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName + "."
-						+ Constants.QUERY_PERIOD
-						+ " null or not present using default values 5 min.");
-				period = 5;
-
+				try {
+					period = new Integer(_propsq.getProperty(Constants.QUERY_DEFAULT_PERIOD));
+				}catch (Exception ex1) {
+					SmartLogger.logThis(Level.DEBUG, "Note: " + Constants.QUERY_DEFAULT_PERIOD
+							+ " null or not present using default values 2 min.");
+					period = 2;
+				}
 			}
+			
 			Boolean active = true;
 			try {
 				String active_str = _propsq.getProperty(_queryName + "."
@@ -255,7 +274,8 @@ public class Configurator {
 			}
 			
 			
-			Query q = new Query(query, _queryName, noDataFound, raceCondQuery,
+			
+			Query q = new Query(query, _queryName, noDataFound,whenNotAlive , raceCondQuery,
 					raceCondValue, period, active, trim, space, excludeColumns,
 					raceExcludeColumns);
 
@@ -269,8 +289,22 @@ public class Configurator {
 	}
 
 
-	protected static Query[] refresh(Query[] _myquery, String _prpFile) {
-		Properties _prp = getPropsFromFile(_prpFile);
+	/*protected  Query[] refresh(Query[] _myquery, String _prpFile,String _extraPrpFile) {
+		if (_prpFile!=null){
+			Properties _prp = getPropsFromFile(_prpFile);
+			Query[] q = Configurator.getQueries(_prp);
+
+			
+			
+			_prp = getPropsFromFile(_extraPrpFile);
+			Query[] q = Configurator.getQueries(_prp);
+			
+			
+			Configurator.getQueryProperties(_prpFile, q);
+		}
+		
+		
+		/*Properties _prp = getPropsFromFile(_prpFile);
 		for (int i = 0; i < _myquery.length; i++) {
 			try {
 				Query qnew = Configurator.getQueryProperties(_prp, _myquery[i]
@@ -326,7 +360,7 @@ public class Configurator {
 			}
 		}
 		return _myquery;
-	}
+	}*/
 
 	private static void verifyConfig() {
 		if (_props == null ) {
@@ -379,20 +413,41 @@ public class Configurator {
 				uname = new String(_props.getProperty(dbName + "."
 						+ Constants.CONN_USERNAME));
 			} catch (Exception ex) {
+				try {
+				SmartLogger.logThis(Level.DEBUG,
+						"Error on Configurator getConnection while getting "
+								+ dbName + "."
+								+ Constants.CONN_USERNAME + " "
+								+ ex.getMessage());
+				
+				uname = new String(_props.getProperty(
+						Constants.CONN_DEFAULT_USERNAME));
+				} catch (Exception ex1){
 				SmartLogger.logThis(Level.ERROR,
 						"Error on Configurator getConnection while getting "
-								+ dbName + "." + Constants.CONN_USERNAME + " "
-								+ ex.getMessage());
-			}
+								+ Constants.CONN_DEFAULT_USERNAME + " "
+								+ ex1.getMessage());
+					}
+				}
 			String password = "";
 			try {
 				password = new String(_props.getProperty(dbName + "."
 						+ Constants.CONN_PASSWORD));
 			} catch (Exception ex) {
+				try{
+					SmartLogger.logThis(Level.DEBUG,
+							"Error on Configurator getConnection while getting "
+									+ dbName + "."
+									+ Constants.CONN_PASSWORD + " "
+									+ ex.getMessage());
+					password = new String(_props.getProperty(
+							Constants.CONN_DEFAULT_PASSWORD));
+				} catch (Exception ex1){
 				SmartLogger.logThis(Level.ERROR,
 						"Error on Configurator getConnection while getting "
 								+ dbName + "." + Constants.CONN_PASSWORD + " "
 								+ ex.getMessage());
+				}
 			}
 			DriverAdapterCPDS cpds = new DriverAdapterCPDS();
 			cpds.setDriver(Constants.ORACLE_DRIVER);
@@ -462,6 +517,7 @@ public class Configurator {
 				}
 			}
 			tds.setMaxIdle(maxIdle.intValue());
+			tds.setTestOnReturn(true);
 			
 			SmartLogger.logThis( Level.INFO,"DB Pool created: " + tds);
     		SmartLogger.logThis( Level.INFO, "URL=" + url.toString() );
@@ -602,13 +658,13 @@ public class Configurator {
 		}
 	}
 
-	public String getQueryFile() {
+	public static String getQueryFile() {
 		String queryFile = new String(_props
 				.getProperty(Constants.QUERY_LIST_FILE));
 		return queryFile;
 	}
 
-	public String getQueryFile(String dbName) {
+	public static String getQueryFile(String dbName) {
 		try {
 			verifyConfig();
 			if (_props.getProperty(dbName + "." + Constants.QUERY_LIST_FILE) != null) {
@@ -620,6 +676,19 @@ public class Configurator {
 					+ dbName + ") " + ex.getMessage());
 			SmartLogger.logThis(Level.WARN, "I'm going to return getQueryFile() ");
 			return getQueryFile();
+		}
+		return null;
+	}
+	public static String getExtraQueryFile(String dbName) {
+		try {
+			verifyConfig();
+			if (_props.getProperty(dbName + "." + Constants.EXTRA_QUERY_LIST_FILE) != null) {
+				return (_props.getProperty(dbName + "."
+						+ Constants.EXTRA_QUERY_LIST_FILE));
+			}
+		} catch (Exception ex) {
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator on getExtraQueryFile("
+					+ dbName + ") " + ex.getMessage());
 		}
 		return null;
 	}
@@ -726,7 +795,7 @@ public class Configurator {
 		}
 		StringTokenizer st = new StringTokenizer(zxblist, Constants.DELIMITER);
 		Hashtable<String, Integer> ZabbixServers = new Hashtable<String, Integer>();
-		int count = 0;
+		//int count = 0;
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken().toString();
 			String server = new String();
@@ -751,13 +820,13 @@ public class Configurator {
 						+ port);
 			}
 			ZabbixServers.put(server, port);
-			count++;
+			//count++;
 		}
 		// fisdb.close();
 		return ZabbixServers;
 	}
 
-	public boolean hasQueryFile(String dbName) {
+	public static boolean hasQueryFile(String dbName) {
 		if (dbName == null) {
 			return false;
 		}
@@ -768,6 +837,23 @@ public class Configurator {
 			}
 		} catch (Exception ex) {
 			SmartLogger.logThis(Level.ERROR, "Error on Configurator getting"+ Constants.QUERY_LIST_FILE
+					+ dbName + ex.getMessage());
+			return false;
+		}
+		return false;
+	}
+	
+	public static boolean hasExtraQueryFile(String dbName) {
+		if (dbName == null) {
+			return false;
+		}
+		try {
+			verifyConfig();
+			if (_props.getProperty(dbName + "." + Constants.EXTRA_QUERY_LIST_FILE) != null) {
+				return true;
+			}
+		} catch (Exception ex) {
+			SmartLogger.logThis(Level.ERROR, "Error on Configurator getting"+ Constants.EXTRA_QUERY_LIST_FILE
 					+ dbName + ex.getMessage());
 			return false;
 		}
@@ -863,4 +949,48 @@ public class Configurator {
 		}
 	}
 
+	public static boolean propVerify(String _prop) {
+		// TODO Auto-generated method stub
+		
+		if (_prop!= null){
+			if (!_prop.isEmpty()&&!_prop.equals("")){
+				Properties props = new Properties();
+				FileInputStream fisq;
+				File queryFile = new File(_prop);
+				try {
+				fisq = new FileInputStream(new java.io.File(queryFile
+							.getAbsoluteFile().getCanonicalPath()));
+				props.load(fisq);
+				fisq.close();
+				return true;
+				}
+				catch (Exception ex){
+					SmartLogger.logThis(Level.DEBUG,"Error on Configurator while checking file "+_prop+" "+ex);
+					return false;
+					}
+				}
+			}
+				return false;
+	}
+
+	public static Querybox buildQueryBoxbyDBName(String dbname){
+		String queryFile =null;
+		String extraQueryFile=null;
+		
+		if (hasQueryFile(dbname)) {
+			queryFile = getQueryFile(dbname);
+			} else {
+				queryFile = getQueryFile();
+		}
+		
+		if (hasExtraQueryFile(dbname)){
+			extraQueryFile = getExtraQueryFile(dbname);
+		}
+		
+		Querybox qboxtmp = new Querybox(dbname,
+					queryFile,extraQueryFile);
+		return qboxtmp;
+	}
+	
+	
 }

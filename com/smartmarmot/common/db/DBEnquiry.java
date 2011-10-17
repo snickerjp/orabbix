@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU General Public License along with
  * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.smartmarmot.common.db;
 
-import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Level;
 
@@ -41,6 +42,7 @@ import com.smartmarmot.zabbix.ZabbixItem;
 public class DBEnquiry {
 
 
+	
 	public static String ask(String _query, Connection _con, String queryName,
 			String dbName, Boolean trim, Boolean space,
 			List<Integer> _excludeColumns) {
@@ -218,7 +220,7 @@ public class DBEnquiry {
 					"Error on DBEnquiry while closing connection "
 					+ ex.getMessage() + " on database=" + dbname);
 		}
-		ZabbixItem[] items = (ZabbixItem[]) SZItems.toArray(new ZabbixItem[0]);
+		ZabbixItem[] items = SZItems.toArray(new ZabbixItem[0]);
 		return items;
 	}
 }

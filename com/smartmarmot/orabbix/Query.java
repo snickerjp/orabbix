@@ -19,6 +19,7 @@
 
 package com.smartmarmot.orabbix;
 
+
 import java.util.List;
 import java.util.Date;
 
@@ -27,6 +28,7 @@ public class Query {
 	private String sql;
 	private String name;
 	private String nodata;
+	private String whennotalive;
 	private String racequery;
 	private String racevalue;
 	private List<Integer> raceExcludeColumns = null;
@@ -37,7 +39,7 @@ public class Query {
 	private Boolean space = false;
 	private Boolean trim = true;
 
-	public Query(String _query, String _name, String _nodata, String _rccondq,
+	public Query(String _query, String _name, String _nodata, String _whenNotAlive, String _rccondq,
 			String _rccondval, int _period, Boolean _active, Boolean _trim,
 			Boolean _space, List<Integer> _excludeColumns,
 			List<Integer> _raceExcludeColumns) {
@@ -75,6 +77,11 @@ public class Query {
 		if (_space != null) {
 			this.setSpace(_space);
 		}
+		this.whennotalive="";
+		if (_whenNotAlive != null) {
+			this.whennotalive=_whenNotAlive;
+		}
+
 		if (_active != null) {
 			this.setActive(_active);
 		}
@@ -122,6 +129,16 @@ public class Query {
 		this.active = active;
 	}
 
+	public boolean ifNotAlive() {
+		if (this.whennotalive != null){
+			if (this.whennotalive != ""){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
 	public void setNextrun(Date nextrun) {
 		this.nextrun = nextrun;
 	}
@@ -166,5 +183,10 @@ public class Query {
 	}
 	public List<Integer> getRaceExcludeColumnsList() {
 		return raceExcludeColumns;
+	}
+
+	public String getWhenNotAlive() {
+		// TODO Auto-generated method stub
+		return this.whennotalive;
 	}
 }

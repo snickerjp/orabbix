@@ -103,7 +103,7 @@ public final class Sender implements Runnable {
      * @see java.lang.Thread#run()
      */
     @Override
-    public void run() {
+	public void run() {
             try {
                 final ZabbixItem item = queue.take();
                 int retryCount = 0;

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * orabbix. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.smartmarmot.common.db;
 
 import java.sql.Connection;
@@ -87,6 +88,7 @@ public class DBJob implements Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 
 		SmartLogger.logThis(Level.DEBUG, "Starting dbJob on database "
@@ -128,9 +130,10 @@ public class DBJob implements Runnable {
 				_queue.offer(new ZabbixItem("alive", "0",this._dbname));
 				_queue.offer(new ZabbixItem(Constants.PROJECT_NAME+"Version", Constants.BANNER,this._dbname));
 				for (int cnt = 0; cnt < this._queries.length; cnt++) {
+					if (_queries[cnt].ifNotAlive()){
 					_queue.offer(new ZabbixItem(_queries[cnt].getName(),
-							_queries[cnt].getNoData(),_dbname));
-					
+							_queries[cnt].getWhenNotAlive(),_dbname));
+					}
 				}
 				Sender sender = new Sender(_queue, _zabbixServers,
 						_dbname);

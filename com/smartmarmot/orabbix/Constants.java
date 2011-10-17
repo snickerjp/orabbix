@@ -19,19 +19,24 @@
 
 package com.smartmarmot.orabbix;
 
+
 public class Constants {
-	public static final String VERSION = "Version 1.2.0 RC2";
+	public static final String VERSION = "Version 1.2.2 ";
 	public static final String BANNER = Constants.PROJECT_NAME + " " + VERSION;
 	public static final String PROJECT_NAME = "Orabbix";
 	public static final String DATABASES_LIST = "DatabaseList";
 	public static final String DELIMITER = ",";
 	public static final String QUERY_LIST = "QueryList";
 	public static final String QUERY_LIST_FILE = "QueryListFile";
+	public static final String EXTRA_QUERY_LIST_FILE = "ExtraQueryListFile";
 	public static final String QUERY_POSTFIX = "Query";
 	public static final String QUERY_NO_DATA_FOUND = "NoDataFound";
+	public static final String QUERY_WHEN_NOT_ALIVE = "WhenNotAlive";
 	public static final String CONN_URL = "Url";
 	public static final String CONN_USERNAME = "User";
 	public static final String CONN_PASSWORD = "Password";
+	public static final String CONN_DEFAULT_USERNAME = "DefaultUser";
+	public static final String CONN_DEFAULT_PASSWORD = "DefaultPassword";
 	public static final String CONN_MAX_ACTIVE = "MaxActive";
 	public static final String CONN_MAX_IDLE = "MaxIdle";
 	public static final String CONN_MAX_WAIT = "MaxWait";
@@ -44,6 +49,7 @@ public class Constants {
 	public static final String RACE_CONDITION_EXCLUDE_COLUMNS = "RaceConditionQueryExcludeColumnsList";
 	public static final String RACE_CONDITION_VALUE = "RaceConditionValue";
 	public static final String QUERY_PERIOD = "Period";
+	public static final String QUERY_DEFAULT_PERIOD = "DefaultQueryPeriod";
 	public static final String QUERY_ACTIVE = "Active";
 	public static final String ZABBIX_SERVER_LIST = "ZabbixServerList";
 	public static final String ZABBIX_SERVER_PORT = "Port";

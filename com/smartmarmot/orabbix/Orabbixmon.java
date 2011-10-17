@@ -124,17 +124,8 @@ public class Orabbixmon implements Runnable {
 			 */
 			Hashtable<String, Querybox> qbox = new Hashtable<String, Querybox>();
 			for (int i = 0; i < myDBConn.length; i++) {
-				if (cfg.hasQueryFile(myDBConn[i].getName())) {
-					String queryFile = cfg.getQueryFile(myDBConn[i].getName());
-					Querybox qboxtmp = new Querybox(myDBConn[i].getName(),
-							queryFile);
-					qbox.put(myDBConn[i].getName(), qboxtmp);
-				} else {
-					String queryFile = cfg.getQueryFile();
-					Querybox qboxtmp = new Querybox(myDBConn[i].getName(),
-							queryFile);
-					qbox.put(myDBConn[i].getName(), qboxtmp);
-				}
+				Querybox qboxtmp = Configurator.buildQueryBoxbyDBName(myDBConn[i].getName());
+				qbox.put(myDBConn[i].getName(), qboxtmp);
 			}// for (int i = 0; i < myDBConn.length; i++) {
 
 			cfg = null;
@@ -157,20 +148,10 @@ public class Orabbixmon implements Runnable {
 					myDBConn = c.rebuildDBList(myDBConn);
 					for (int i = 1; i < myDBConn.length; i++) {
 						if (!qbox.containsKey(myDBConn[i].getName())) {
-							if (c.hasQueryFile(myDBConn[i].getName())) {
-								String queryFile = c.getQueryFile(myDBConn[i]
-										.getName());
-								Querybox qboxtmp = new Querybox(
-										myDBConn[i].getName(), queryFile);
-								qbox.put(myDBConn[i].getName(), qboxtmp);
-							} else {
-								String queryFile = c.getQueryFile();
-								Querybox qboxtmp = new Querybox(
-										myDBConn[i].getName(), queryFile);
-								qbox.put(myDBConn[i].getName(), qboxtmp);
+							Querybox qboxtmp = Configurator.buildQueryBoxbyDBName(myDBConn[i].getName());
+							qbox.put(myDBConn[i].getName(), qboxtmp);
 							}
 						}
-					}
 				}// if (!c.isEqualsDBList(myDBConn)) {
 
 				/*
@@ -184,8 +165,7 @@ public class Orabbixmon implements Runnable {
 
 					SharedPoolDataSource spds = myDBConn[i].getSPDS();
 
-					Hashtable<String, Integer> zabbixServers = c
-							.getZabbixServers();
+					Hashtable<String, Integer> zabbixServers = c.getZabbixServers();
 					SmartLogger.logThis(
 							Level.DEBUG,
 							"Ready to run DBJob for dbname ->"
