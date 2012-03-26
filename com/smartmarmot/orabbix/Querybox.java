@@ -21,11 +21,13 @@ package com.smartmarmot.orabbix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Properties;
 
 import org.apache.log4j.Level;
 
 import com.smartmarmot.common.SmartLogger;
+import com.smartmarmot.orabbix.Configurator;
 
 public class Querybox {
 	private Query[] _query;
@@ -71,18 +73,37 @@ public class Querybox {
 
 	public void refresh()  {
 		try {
+			Query[] firstq=null;
+			Query[] extraq=null;
+			
 			if (_queriesfile != null){
 				Properties prp = Configurator.getPropsFromFile(_queriesfile);
-				Query[] q =Configurator.getQueries(prp);
-				this.setQueries(q);
+				firstq =Configurator.getQueries(prp);
+				//this.setQueries(q);
 			}
 			if (_extraqueriesfile != null){
 				Properties prp = Configurator.getPropsFromFile(_extraqueriesfile);
-				Query[] q =Configurator.getQueries(prp);
-				this.addQueries(q);
+				extraq =Configurator.getQueries(prp);
 			}
 		
+			Query[] refreshedq = addQueries(firstq,extraq);
+			if (this._query==null){
+				this.setQueries(refreshedq);
+			} else {
+				for (int i = 0; i <refreshedq.length; i++){
+					for (int j = 0; j <  this._query.length; j++){
+						if (_query[j].getName().equals(refreshedq[i].getName())){
+							refreshedq[i].setNextrun(_query[j].getNextrun());
+						}
+					}
+				}
+				this.setQueries(refreshedq);
+			}	
+			
+			
+			
 		}catch (Exception ex){
+			SmartLogger.logThis(Level.ERROR, "Error on Querybox "+ex);
 			
 		}
 		
@@ -98,21 +119,22 @@ public class Querybox {
 		this._query = _query;
 	}
 
-	public void addQueries(Query[] _newquery) {
-		Query[] _original=this._query;
-		ArrayList<Query> tempOriginalArray = new ArrayList<Query>(Arrays.asList(_original));
+	public Query[] addQueries(Query[] _originalquery,Query[] _newquery) {
+		ArrayList<Query> tempOriginalArray = new ArrayList<Query>(Arrays.asList(_originalquery));
 		ArrayList<Query> tempNewArray = new ArrayList<Query>(Arrays.asList(_newquery));
-		for (int i = 0; i < _original.length; i++){
+		for (int i = 0; i < _originalquery.length; i++){
 			for (int j = 0; j < _newquery.length; j++){
-				if (_original[i].getName().equals(_newquery[j].getName())){
-					tempOriginalArray.remove(_original[i]);
+				if (_originalquery[i].getName().equals(_newquery[j].getName())){
+					tempOriginalArray.remove(_originalquery[i]);
 					tempOriginalArray.add(_newquery[j]);
 					tempNewArray.remove(_newquery[j]);
 				}
 			} 	
 		}
 		tempOriginalArray.addAll(tempNewArray);
-		this._query=(Query[]) tempOriginalArray.toArray();
+		Query[] queries = (Query[]) tempOriginalArray.toArray(new Query[0]);
+		//this.setQueries(queries);
+		return queries;
 	}
 
 	public void setQueriesFile(String _queriesfile) {

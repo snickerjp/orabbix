@@ -21,7 +21,7 @@ package com.smartmarmot.orabbix;
 
 
 public class Constants {
-	public static final String VERSION = "Version 1.2.2 ";
+	public static final String VERSION = "Version 1.2.3 ";
 	public static final String BANNER = Constants.PROJECT_NAME + " " + VERSION;
 	public static final String PROJECT_NAME = "Orabbix";
 	public static final String DATABASES_LIST = "DatabaseList";
@@ -31,7 +31,6 @@ public class Constants {
 	public static final String EXTRA_QUERY_LIST_FILE = "ExtraQueryListFile";
 	public static final String QUERY_POSTFIX = "Query";
 	public static final String QUERY_NO_DATA_FOUND = "NoDataFound";
-	public static final String QUERY_WHEN_NOT_ALIVE = "WhenNotAlive";
 	public static final String CONN_URL = "Url";
 	public static final String CONN_USERNAME = "User";
 	public static final String CONN_PASSWORD = "Password";

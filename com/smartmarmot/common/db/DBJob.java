@@ -102,7 +102,7 @@ public class DBJob implements Runnable {
 			}*/
 			if (Alive(dbConn)){
 				_queue.offer(new ZabbixItem("alive", "1",this._dbname));
-				_queue.offer(new ZabbixItem(Constants.PROJECT_NAME+"Version", Constants.BANNER,this._dbname));
+				_queue.offer(new ZabbixItem(Constants.PROJECT_NAME+"."+"Version", Constants.BANNER,this._dbname));
 				ZabbixItem[] zitems = DBEnquiry.execute(this._queries,
 						dbConn, this._dbname);
 				if (zitems != null && zitems.length > 0) {
@@ -128,12 +128,11 @@ public class DBJob implements Runnable {
 			} else{
 				BlockingQueue<ZabbixItem> _queue = new LinkedBlockingQueue<ZabbixItem>();
 				_queue.offer(new ZabbixItem("alive", "0",this._dbname));
-				_queue.offer(new ZabbixItem(Constants.PROJECT_NAME+"Version", Constants.BANNER,this._dbname));
+				_queue.offer(new ZabbixItem(Constants.PROJECT_NAME+"."+"Version", Constants.BANNER,this._dbname));
 				for (int cnt = 0; cnt < this._queries.length; cnt++) {
-					if (_queries[cnt].ifNotAlive()){
 					_queue.offer(new ZabbixItem(_queries[cnt].getName(),
-							_queries[cnt].getWhenNotAlive(),_dbname));
-					}
+							_queries[cnt].getNoData(),_dbname));
+					
 				}
 				Sender sender = new Sender(_queue, _zabbixServers,
 						_dbname);

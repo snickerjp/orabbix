@@ -134,15 +134,6 @@ public class Configurator {
 						+ "." + Constants.QUERY_NO_DATA_FOUND
 						+ " null or not present " + ex.getMessage());
 			}
-			String whenNotAlive = "";
-			try {
-				whenNotAlive = new String(_propsq.getProperty(_queryName + "."
-						+ Constants.QUERY_WHEN_NOT_ALIVE));
-			} catch (Exception ex) {
-				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
-						+ "." + Constants.QUERY_WHEN_NOT_ALIVE
-						+ " null or not present " + ex.getMessage());
-			}
 			String raceCondQuery = "";
 			try {
 				raceCondQuery = new String(_propsq.getProperty(_queryName + "."
@@ -275,7 +266,7 @@ public class Configurator {
 			
 			
 			
-			Query q = new Query(query, _queryName, noDataFound,whenNotAlive , raceCondQuery,
+			Query q = new Query(query, _queryName, noDataFound, raceCondQuery,
 					raceCondValue, period, active, trim, space, excludeColumns,
 					raceExcludeColumns);
 
@@ -517,7 +508,6 @@ public class Configurator {
 				}
 			}
 			tds.setMaxIdle(maxIdle.intValue());
-			tds.setTestOnReturn(true);
 			
 			SmartLogger.logThis( Level.INFO,"DB Pool created: " + tds);
     		SmartLogger.logThis( Level.INFO, "URL=" + url.toString() );
@@ -795,7 +785,7 @@ public class Configurator {
 		}
 		StringTokenizer st = new StringTokenizer(zxblist, Constants.DELIMITER);
 		Hashtable<String, Integer> ZabbixServers = new Hashtable<String, Integer>();
-		//int count = 0;
+		int count = 0;
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken().toString();
 			String server = new String();
@@ -820,7 +810,7 @@ public class Configurator {
 						+ port);
 			}
 			ZabbixServers.put(server, port);
-			//count++;
+			count++;
 		}
 		// fisdb.close();
 		return ZabbixServers;
