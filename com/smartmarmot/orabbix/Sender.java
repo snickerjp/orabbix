@@ -8,12 +8,12 @@ package com.smartmarmot.orabbix;
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * Zapcat is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * Zapcat. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,6 +21,7 @@ package com.smartmarmot.orabbix;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.Enumeration;
@@ -36,7 +37,7 @@ import com.smartmarmot.common.SmartLogger;
 import com.smartmarmot.zabbix.ZabbixItem;
 /**
  * A daemon thread that waits for and forwards data items to a Zabbix server.
- * 
+ *
  * @author Kees Jan Koster Completely modified by
  * 		   Andrea Dalle Vacche
  */
@@ -47,12 +48,12 @@ public final class Sender implements Runnable {
 
     private final Hashtable <String , Integer >  zabbixServers;
 
-    
-    
+
+
     private final String head;
-    
+
     private final String host;
-    
+
     private static final String middle = "</key><data>";
 
     private static final String tail = "</data></req>";
@@ -61,13 +62,13 @@ public final class Sender implements Runnable {
 
     private boolean stopping = false;
 
-    private static final int retryNumber = 10; 
-    
+    private static final int retryNumber = 10;
+
     private static final int TIMEOUT = 30 * 1000;
 
     /**
      * Create a new background sender.
-     * 
+     *
      * @param queue
      *            The queue to get data items from.
      * @param zabbixServer
@@ -76,11 +77,11 @@ public final class Sender implements Runnable {
      *            The port number on that machine.
      * @param host
      *            The host name, as defined in the host definition in Zabbix.
-     *   
+     *
      */
     public Sender(final BlockingQueue<ZabbixItem> queue,
     		Hashtable <String , Integer > ZabbixServers,
-            
+
             final String host) {
       /*  super("Zabbix-sender");
         setDaemon(true);
@@ -130,13 +131,13 @@ public final class Sender implements Runnable {
 	                		continue trysend1;
 	                	}
                }
-               
-                
+
+
             } catch (InterruptedException e) {
                 if (!stopping) {
                     log.warn("ignoring exception", e);
                 }
-                       
+
             } catch (Exception e) {
                 log.warn("ignoring exception", e);
             }
@@ -159,7 +160,7 @@ public final class Sender implements Runnable {
             		retryCount++;
             		continue trysend2;
             		}
-           	
+
             }
             if (retryCount==retryNumber){
             	SmartLogger.logThis(Level.WARN, "Error i didn't sent item "
@@ -168,13 +169,13 @@ public final class Sender implements Runnable {
             }
         }
     }
-    
+
     /**
 	 * Encodes data for transmission to the server.
-	 * 
+	 *
 	 * This method encodes the data in the ASCII encoding, defaulting to
 	 * the platform default encoding if that is somehow unavailable.
-	 * 
+	 *
 	 * @param data
 	 * @return byte[] containing the encoded data
 	 */
@@ -185,11 +186,11 @@ public final class Sender implements Runnable {
 			return data.getBytes();
 		}
 	}
-	
+
     protected String base64Encode(String data) {
 		return new String(Base64.encodeBase64(encodeString(data)));
 	}
-    
+
     private void send(final String key, final String value) throws IOException {
         final StringBuilder message = new StringBuilder(head);
         //message.append(Base64.encode(key));
@@ -204,7 +205,8 @@ public final class Sender implements Runnable {
         }
 
         Socket zabbix = null;
-        OutputStreamWriter out = null;
+//      OutputStreamWriter out = null;
+        OutputStream out = null;
         InputStream in = null;
         Enumeration<String> serverlist  = zabbixServers.keys();
 
@@ -214,12 +216,26 @@ public final class Sender implements Runnable {
 				zabbix = new Socket(zabbixServer, zabbixServers.get(
 						zabbixServer).intValue());
 	            zabbix.setSoTimeout(TIMEOUT);
-	            
-	
-	            out = new OutputStreamWriter(zabbix.getOutputStream());
-	            out.write(message.toString());
+
+    	    byte[] data = message.toString().getBytes("UTF-8");
+
+    	    byte[] header = new byte[] {
+	        'Z', 'B', 'X', 'D', '\1',
+			(byte)(data.length & 0xFF),
+			(byte)((data.length >> 8) & 0xFF),
+			(byte)((data.length >> 16) & 0xFF),
+			(byte)((data.length >> 24) & 0xFF),
+			'\0', '\0', '\0', '\0'};
+
+		    byte[] packet = new byte[header.length + data.length];
+		    System.arraycopy(header, 0, packet, 0, header.length);
+		    System.arraycopy(data, 0, packet, header.length, data.length);
+
+//	            out = new OutputStreamWriter(zabbix.getOutputStream());
+	            out = zabbix.getOutputStream();
+	            out.write(packet);
 	            out.flush();
-	
+
 	            in = zabbix.getInputStream();
 	            final int read = in.read(response);
 	            if (log.isDebugEnabled()) {
@@ -238,7 +254,7 @@ public final class Sender implements Runnable {
 								+ "  on port "
 								+ zabbixServers.get(zabbixServer));
 	        }
-	        
+
 	        finally {
 	            if (in != null) {
 	                in.close();
