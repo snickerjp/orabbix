@@ -21,6 +21,7 @@ package com.smartmarmot.orabbix;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.Enumeration;
@@ -204,7 +205,8 @@ public final class Sender implements Runnable {
         }
 
         Socket zabbix = null;
-        OutputStreamWriter out = null;
+//      OutputStreamWriter out = null;
+        OutputStream out = null;
         InputStream in = null;
         Enumeration<String> serverlist  = zabbixServers.keys();
 
@@ -215,9 +217,23 @@ public final class Sender implements Runnable {
 						zabbixServer).intValue());
 	            zabbix.setSoTimeout(TIMEOUT);
 
+    	    byte[] data = message.toString().getBytes("UTF-8");
 
-	            out = new OutputStreamWriter(zabbix.getOutputStream());
-	            out.write(message.toString());
+    	    byte[] header = new byte[] {
+	        'Z', 'B', 'X', 'D', '\1',
+			(byte)(data.length & 0xFF),
+			(byte)((data.length >> 8) & 0xFF),
+			(byte)((data.length >> 16) & 0xFF),
+			(byte)((data.length >> 24) & 0xFF),
+			'\0', '\0', '\0', '\0'};
+
+		    byte[] packet = new byte[header.length + data.length];
+		    System.arraycopy(header, 0, packet, 0, header.length);
+		    System.arraycopy(data, 0, packet, header.length, data.length);
+
+//	            out = new OutputStreamWriter(zabbix.getOutputStream());
+	            out = zabbix.getOutputStream();
+	            out.write(packet);
 	            out.flush();
 
 	            in = zabbix.getInputStream();
