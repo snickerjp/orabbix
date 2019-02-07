@@ -20,6 +20,6 @@ mkdir -p ./build
 cp orabbix-1.2.3/orabbix-1.2.3.jar ./build
 cd build
 jar -xvf orabbix-1.2.3.jar com
-cp ../com/smartmarmot/orabbix/Sender.java com/smartmarmot/orabbix/Sender.java
+cp ../com/smartmarmot/orabbix/Sender.class com/smartmarmot/orabbix/Sender.class
 jar -uf orabbix-1.2.3.jar com
 ```
