@@ -9,7 +9,7 @@ cd orabbix
 # download orabbix
 #from: https://sourceforge.net/projects/orabbix/
 
-unzip orabbix-1.2.3.zip
+unzip -d orabbix-1.2.3 orabbix-1.2.3.zip
 
 # compile
 # require. java-1.7.0-openjdk-devel,java-1.8.0-openjdk-devel
