@@ -26,3 +26,10 @@ jar -xvf orabbix-1.2.3.jar com
 cp ../com/smartmarmot/orabbix/Sender.class com/smartmarmot/orabbix/Sender.class
 jar -uf orabbix-1.2.3.jar com
 ```
+
+## Test
+
+- Work with Zabbix 5.0
+
+ex. 
+snickerjp/orabbix#9
