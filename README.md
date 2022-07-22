@@ -31,4 +31,5 @@ jar -uf orabbix-1.2.3.jar com
 
 - Work with Zabbix 5.0
 
-ex. GH-9
+ex. 
+snickerjp/orabbix#9
