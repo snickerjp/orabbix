@@ -18,7 +18,7 @@ ls -d orabbix-1.2.3
 
 # compile
 # require. java-1.7.0-openjdk-devel or java-1.8.0-openjdk-devel
-javac -cp "orabbix-1.2.3/orabbix-1.2.3.jar:orabbix-1.2.3/lib/*" com/smartmarmot/orabbix/Sender.java
+javac -cp "$(for _JAR in orabbix-1.2.3/lib/*.jar;do echo -n $_JAR:;done)orabbix-1.2.3/orabbix-1.2.3.jar" com/smartmarmot/orabbix/Sender.java
 mkdir -p ./build
 cp orabbix-1.2.3/orabbix-1.2.3.jar ./build
 cd build
@@ -29,8 +29,8 @@ jar -uf orabbix-1.2.3.jar com
 
 ## Test
 
-  - Work with Zabbix 5.0
-  - Work with Zabbix 6.0
+	- Work with Zabbix 5.0
+	- Work with Zabbix 6.0
 
 ex. 
 snickerjp/orabbix#9
