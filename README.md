@@ -1,4 +1,4 @@
-# Orabbix support Zabbix 4.0
+# Orabbix support Zabbix 4.0,5.0,6.0
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/56a9164c812c4ea1a0fca04469616c7c)](https://app.codacy.com/app/snickerjp/orabbix?utm_source=github.com&utm_medium=referral&utm_content=snickerjp/orabbix&utm_campaign=Badge_Grade_Settings)
 
@@ -28,9 +28,8 @@ jar -uf orabbix-1.2.3.jar com
 ```
 
 ## Test
-
-	- Work with Zabbix 5.0
-	- Work with Zabbix 6.0
+  - Work with Zabbix 5.0
+  - Work with Zabbix 6.0
 
 ex. 
 snickerjp/orabbix#9
