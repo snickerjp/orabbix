@@ -18,7 +18,7 @@ ls -d orabbix-1.2.3
 
 # compile
 # require. java-1.7.0-openjdk-devel or java-1.8.0-openjdk-devel
-javac -cp "orabbix-1.2.3/orabbix-1.2.3.jar:orabbix-1.2.3/lib/*" com/smartmarmot/orabbix/Sender.java
+javac -cp "$(for i in orabbix-1.2.3/lib/*.jar;do echo -n $i:;done)orabbix-1.2.3/orabbix-1.2.3.jar" com/smartmarmot/orabbix/Sender.java
 mkdir -p ./build
 cp orabbix-1.2.3/orabbix-1.2.3.jar ./build
 cd build
