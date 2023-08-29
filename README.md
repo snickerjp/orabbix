@@ -35,6 +35,7 @@ jar -uf orabbix-1.2.3.jar com
 *  Work with Zabbix 6.0
 
 ### Java
+*  Work with Java7
 *  Work with Java8
 *  Work with Java17
 
