@@ -53,4 +53,3 @@ snickerjp/orabbix#9
 ## Screenshot
 
 ![image](https://github.com/snickerjp/orabbix/assets/1247622/4494419e-2a2d-41cd-a7cf-b8565b689cf9)
-
