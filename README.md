@@ -30,18 +30,22 @@ jar -uf orabbix-1.2.3.jar com
 ## Test
 
 ### Zabbix
-*  Work with Zabbix 4.0
-*  Work with Zabbix 5.0
-*  Work with Zabbix 6.0
+
+- Work with Zabbix 4.0
+- Work with Zabbix 5.0
+- Work with Zabbix 6.0
 
 ### Java
-*  Work with Java7
-*  Work with Java8
-*  Work with Java17
+
+- Work with Java7
+- Work with Java8
+- Work with Java17
 
 ### Oracle Database
-*  Work with 11g
-*  Work with 12c
+
+- Work with 11g
+- Work with 12c
+- Work with 21c XE
 
 ex.
 snickerjp/orabbix#9
