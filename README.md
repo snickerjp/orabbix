@@ -42,6 +42,7 @@ jar -uf orabbix-1.2.3.jar com
 ### Oracle Database
 *  Work with 11g
 *  Work with 12c
+*  Work with 21c XE
 
 ex.
 snickerjp/orabbix#9
