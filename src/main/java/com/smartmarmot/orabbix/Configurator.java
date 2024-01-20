@@ -157,15 +157,15 @@ public class Configurator {
 			 */
 			int period = -1;
 			try {
-				period = new Integer(_propsq.getProperty(_queryName + "."
+				period = Integer.parseInt(_propsq.getProperty(_queryName + "."
 						+ Constants.QUERY_PERIOD));
 			} catch (Exception ex) {
 				SmartLogger.logThis(Level.DEBUG, "Note: " + _queryName
 						+ "." + Constants.QUERY_PERIOD
 						+ " null or not present " + ex.getMessage());
 				try {
-					period = new Integer(_propsq.getProperty(Constants.QUERY_DEFAULT_PERIOD));
-				}catch (Exception ex1) {
+					period = Integer.parseInt(_propsq.getProperty(Constants.QUERY_DEFAULT_PERIOD));
+				} catch (Exception ex1) {
 					SmartLogger.logThis(Level.DEBUG, "Note: " + Constants.QUERY_DEFAULT_PERIOD
 							+ " null or not present using default values 2 min.");
 					period = 2;
@@ -236,7 +236,7 @@ public class Configurator {
 						Constants.DELIMITER);
 				while (st.hasMoreTokens()) {
 					String token = st.nextToken().toString();
-					Integer tmpInteger = new Integer(token);
+					Integer tmpInteger = Integer.valueOf(token);
 					excludeColumns.add(tmpInteger);
 				}
 			} catch (Exception ex) {
@@ -255,7 +255,7 @@ public class Configurator {
 						Constants.DELIMITER);
 				while (st.hasMoreTokens()) {
 					String token = st.nextToken().toString();
-					Integer tmpInteger = new Integer(token);
+					Integer tmpInteger = Integer.valueOf(token);
 					excludeColumns.add(tmpInteger);
 				}
 			} catch (Exception ex) {
@@ -448,64 +448,63 @@ public class Configurator {
 			SharedPoolDataSource tds = new SharedPoolDataSource();
 			tds.setConnectionPoolDataSource(cpds);
 			// tds.setMaxActive(5);
-			Integer maxActive = new Integer(5);
+			Integer maxActive = Integer.valueOf(5);
 			try {
-				maxActive = new Integer(_props.getProperty(dbName + "."
-						+ Constants.CONN_MAX_ACTIVE));
+			    maxActive = Integer.valueOf(_props.getProperty(dbName + "." + Constants.CONN_MAX_ACTIVE));
 			} catch (Exception ex) {
-				SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
-						+ Constants.CONN_MAX_ACTIVE + " " + ex.getMessage());
-				try {
-					maxActive = new Integer(_props
-							.getProperty(Constants.DATABASES_LIST + "."
-									+ Constants.CONN_MAX_ACTIVE));
-				} catch (Exception e) {
-					SmartLogger.logThis(Level.WARN, "Note: "
-							+ Constants.DATABASES_LIST + "."
-							+ Constants.CONN_MAX_ACTIVE + " " + e.getMessage());
-					SmartLogger.logThis(Level.WARN, "Warning I will use default value "
-							+ maxActive);
-				}
+			    SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
+				    + Constants.CONN_MAX_ACTIVE + " " + ex.getMessage());
+			    try {
+				maxActive = Integer.valueOf(_props
+					.getProperty(Constants.DATABASES_LIST + "."
+						+ Constants.CONN_MAX_ACTIVE));
+			    } catch (Exception e) {
+				SmartLogger.logThis(Level.WARN, "Note: "
+					+ Constants.DATABASES_LIST + "."
+					+ Constants.CONN_MAX_ACTIVE + " " + e.getMessage());
+				SmartLogger.logThis(Level.WARN, "Warning I will use default value "
+					+ maxActive);
+			    }
 			}
 			tds.setMaxActive(maxActive.intValue());
-			Integer maxWait = new Integer(100);
+			Integer maxWait = Integer.valueOf(100);
 			try {
-				maxWait = new Integer(_props.getProperty(dbName + "."
+				maxWait = Integer.valueOf(_props.getProperty(dbName + "."
 						+ Constants.CONN_MAX_WAIT));
 			} catch (Exception ex) {
-				SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
-						+ Constants.CONN_MAX_WAIT + " " + ex.getMessage());
-				try {
-					maxWait = new Integer(_props
-							.getProperty(Constants.DATABASES_LIST + "."
-									+ Constants.CONN_MAX_WAIT));
-				} catch (Exception e) {
-					SmartLogger.logThis(Level.WARN, "Note: "
-							+ Constants.DATABASES_LIST + "."
-							+ Constants.CONN_MAX_WAIT + " " + e.getMessage());
-					SmartLogger.logThis(Level.WARN, "Warning I will use default value "
-							+ maxWait);
-				}
+			    SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
+				    + Constants.CONN_MAX_WAIT + " " + ex.getMessage());
+			    try {
+				maxWait = Integer.parseInt(_props
+					.getProperty(Constants.DATABASES_LIST + "."
+						+ Constants.CONN_MAX_WAIT));
+			    } catch (Exception e) {
+				SmartLogger.logThis(Level.WARN, "Note: "
+					+ Constants.DATABASES_LIST + "."
+					+ Constants.CONN_MAX_WAIT + " " + e.getMessage());
+				SmartLogger.logThis(Level.WARN, "Warning I will use default value "
+					+ maxWait);
+			    }
 			}
 			tds.setMaxWait(maxWait.intValue());
-			Integer maxIdle = new Integer(1);
+			Integer maxIdle = Integer.valueOf(1);
 			try {
-				maxIdle = new Integer(_props.getProperty(dbName + "."
+				maxIdle = Integer.valueOf(_props.getProperty(dbName + "."
 						+ Constants.CONN_MAX_IDLE));
 			} catch (Exception ex) {
-				SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
-						+ Constants.CONN_MAX_IDLE + " " + ex.getMessage());
-				try {
-					maxIdle = new Integer(_props
-							.getProperty(Constants.DATABASES_LIST + "."
-									+ Constants.CONN_MAX_IDLE));
-				} catch (Exception e) {
-					SmartLogger.logThis(Level.WARN, "Note: "
-							+ Constants.DATABASES_LIST + "."
-							+ Constants.CONN_MAX_IDLE + " " + e.getMessage());
-					SmartLogger.logThis(Level.WARN, "Warning I will use default value "
-							+ maxIdle);
-				}
+			    SmartLogger.logThis(Level.DEBUG, "Note: " + dbName + "."
+				    + Constants.CONN_MAX_IDLE + " " + ex.getMessage());
+			    try {
+				maxIdle = Integer.valueOf(_props
+					.getProperty(Constants.DATABASES_LIST + "."
+						+ Constants.CONN_MAX_IDLE));
+			    } catch (Exception e) {
+				SmartLogger.logThis(Level.WARN, "Note: "
+					+ Constants.DATABASES_LIST + "."
+					+ Constants.CONN_MAX_IDLE + " " + e.getMessage());
+				SmartLogger.logThis(Level.WARN, "Warning I will use default value "
+					+ maxIdle);
+			    }
 			}
 			tds.setMaxIdle(maxIdle.intValue());
 			
@@ -620,8 +619,7 @@ public class Configurator {
 	public Integer getMaxThread() throws Exception {
 		try {
 			verifyConfig();
-			return new Integer(_props
-					.getProperty(Constants.ORABBIX_DAEMON_THREAD));
+			return Integer.valueOf(_props.getProperty(Constants.ORABBIX_DAEMON_THREAD));
 		} catch (Exception ex) {
 			SmartLogger.logThis(Level.ERROR, "Error on Configurator while retriving the "
 					+ Constants.ORABBIX_DAEMON_THREAD + " " + ex);
@@ -761,9 +759,8 @@ public class Configurator {
 	public int getZabbixServerPort() throws Exception {
 		try {
 			verifyConfig();
-			Integer port = new Integer(_props
-					.getProperty(Constants.ZABBIX_SERVER_PORT));
-			return port.intValue();
+			int port = Integer.parseInt(_props.getProperty(Constants.ZABBIX_SERVER_PORT));
+			return port;
 		} catch (Exception ex) {
 			SmartLogger.logThis(Level.ERROR,
 					"Error on Configurator while retriving zabbix server port "
@@ -797,10 +794,9 @@ public class Configurator {
 						+ token + "." + Constants.ZABBIX_SERVER_HOST + " "
 						+ e.getMessage());
 			}
-			Integer port = new Integer(Constants.ZABBIX_SERVER_DEFAULT_PORT);
+			Integer port = Integer.valueOf(Constants.ZABBIX_SERVER_DEFAULT_PORT);
 			try {
-				port = new Integer(_props.getProperty(token + "."
-						+ Constants.ZABBIX_SERVER_PORT));
+				port = Integer.valueOf(_props.getProperty(token + "." + Constants.ZABBIX_SERVER_PORT));
 			} catch (Exception e) {
 				SmartLogger.logThis(Level.WARN,
 						"Warning on getZabbixServers while getting " + token
@@ -924,9 +920,9 @@ public class Configurator {
 	public static Integer  getSleep() throws Exception {
 		try{
 			verifyConfig();
-			Integer sleep = new Integer(5);
+			Integer sleep = Integer.valueOf(5);
 			try{
-				sleep=new Integer(_props.getProperty(Constants.ORABBIX_DAEMON_SLEEP));
+				sleep = Integer.valueOf(_props.getProperty(Constants.ORABBIX_DAEMON_SLEEP));
 			}catch (Exception e){
 				SmartLogger.logThis(Level.WARN,"Warning while getting "+Constants.ORABBIX_DAEMON_SLEEP+" I will use the default "+sleep);
 			}
