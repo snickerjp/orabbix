@@ -99,7 +99,7 @@
           <dependency>
             <groupId>com.github.ngeor</groupId>
             <artifactId>checkstyle-rules</artifactId>
-            <version>4.9.3</version>
+            <version>4.9.4</version>
           </dependency>
         </dependencies>
         <configuration>
