@@ -367,13 +367,16 @@ public class Configurator {
 		try {
 			try {
 				File configFile = new File(_url);
-				fis = new FileInputStream(new java.io.File(configFile
-						.getAbsoluteFile().getCanonicalPath()));
+				File canonicalFile = configFile.getCanonicalFile(); // Fix: Retrieve the canonical path of the configuration file
+				if (!canonicalFile.isFile()) { // Fix: Check if the canonical path is a valid file
+					throw new FileNotFoundException("Invalid file path: " + canonicalFile.getPath());
+				}
+				fis = new FileInputStream(canonicalFile);
 				props.load(fis);
 				fis.close();
 			} catch (Exception e) {
 				SmartLogger.logThis(Level.ERROR,
-						"Error on Configurator while retriving configuration file "
+						"Error on Configurator while retrieving configuration file "
 								+ _url + " " + e.getMessage());
 			}
 			_props = props;
