@@ -47,6 +47,9 @@ jar -uf orabbix-1.2.3.jar com
 - Work with Java17
 - Work with Java21 (Now testing)
 
+ref.
+[Oracle Java SE Supportロードマップ \| Oracle 日本](https://www.oracle.com/jp/java/technologies/java-se-support-roadmap.html)
+
 ### Oracle Database
 
 - Work with 11g
