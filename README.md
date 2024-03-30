@@ -9,7 +9,7 @@
 
 ```sh
 # Git clone `main` branch.
-git clone https://github.com/snickerjp/orabbix.git -b main 
+git clone https://github.com/snickerjp/orabbix.git -b main
 
 cd orabbix
 # download orabbix
