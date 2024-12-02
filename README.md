@@ -42,7 +42,7 @@ jar -uf orabbix-1.2.3.jar com
 
 ### Java
 
-- Work with Java7 (Now not TEST)
+- Work with Java7 (Java 7 is not currently being tested.)
 - Work with Java8
 - Work with Java17
 - Work with Java21 (Now testing)
