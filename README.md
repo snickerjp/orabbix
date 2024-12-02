@@ -42,7 +42,7 @@ jar -uf orabbix-1.2.3.jar com
 
 ### Java
 
-- Work with Java7
+- Work with Java7 (Now not TEST)
 - Work with Java8
 - Work with Java17
 - Work with Java21 (Now testing)
@@ -57,7 +57,7 @@ ref.
 - Work with 11g
 - Work with 12c
 - Work with 21c XE
-- Work with 23c Free
+- Work with 23ai Free
 
 ex.
 snickerjp/orabbix#9
