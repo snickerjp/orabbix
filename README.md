@@ -1,4 +1,4 @@
-# Orabbix support Zabbix 4.0,5.0,6.0
+# Orabbix support Zabbix 4.0,5.0,6.0,7.0
 
 - Stable Branch is `main`
 - Not support branch `convert_maven`
@@ -38,7 +38,7 @@ jar -uf orabbix-1.2.3.jar com
 - Work with Zabbix 4.0
 - Work with Zabbix 5.0
 - Work with Zabbix 6.0
-- Work with Zabbix 7.0 (Now testing)
+- Work with Zabbix 7.0
 
 ### Java
 
