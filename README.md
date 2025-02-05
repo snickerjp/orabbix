@@ -50,8 +50,8 @@ mvn clean package
 ```
 
 The built JAR files will be available in the `target` directory:
-- `orabbix-1.0-SNAPSHOT.jar`: Basic JAR file
-- `orabbix-1.0-SNAPSHOT-jar-with-dependencies.jar`: JAR with all dependencies included
+- `orabbix-1.2.3.jar`: Basic JAR file
+- `orabbix-1.2.3-jar-with-dependencies.jar`: JAR with all dependencies included
 
 #### Alternative Build Method (Legacy)
 
