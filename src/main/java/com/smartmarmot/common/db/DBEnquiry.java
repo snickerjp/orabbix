@@ -55,11 +55,10 @@ public class DBEnquiry {
 			int numColumns = rsmd.getColumnCount();
 			while (rs.next()) {
 				for (int r = 1; r < numColumns + 1; r++) {
-					Integer tmpInteger = new Integer(r);
+					Integer tmpInteger = Integer.valueOf(r);
 					if (!_excludeColumns.contains(tmpInteger)) {
 						if (trim) {
-							tempStr = tempStr
-									+ rs.getObject(r).toString().trim();
+							tempStr = tempStr + rs.getObject(r).toString().trim();
 						} else {
 							tempStr = tempStr + rs.getObject(r).toString();
 						}
