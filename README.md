@@ -1,27 +1,77 @@
-# Orabbix support Zabbix 4.0,5.0,6.0,7.0
-
-- Stable Branch is `main`
-- Not support branch `convert_maven`
+# Orabbix - Oracle Database Monitoring for Zabbix
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/56a9164c812c4ea1a0fca04469616c7c)](https://app.codacy.com/app/snickerjp/orabbix?utm_source=github.com&utm_medium=referral&utm_content=snickerjp/orabbix&utm_campaign=Badge_Grade_Settings)
 
-## How to build
+Orabbix is a monitoring solution that integrates Oracle Database with Zabbix monitoring system.
 
+## Compatibility
+
+### Zabbix Versions
+- ✅ Zabbix 4.0
+- ✅ Zabbix 5.0
+- ✅ Zabbix 6.0
+- ✅ Zabbix 7.0
+
+### Java Versions
+- ✅ Java 8 (Recommended)
+- ✅ Java 17
+- ✅ Java 21 (Testing)
+- ⚠️ Java 7 (Not actively tested)
+
+For Java support information, see:
+- [Oracle Java SE Support Roadmap (EN)](https://www.oracle.com/java/technologies/java-se-support-roadmap.html)
+- [Oracle Java SE Support Roadmap (JP)](https://www.oracle.com/jp/java/technologies/java-se-support-roadmap.html)
+
+### Oracle Database Versions
+- ✅ Oracle 11g
+- ✅ Oracle 12c
+- ✅ Oracle 21c XE
+- ✅ Oracle 23c Free
+
+## Building from Source
+
+### Prerequisites
+- Java Development Kit (JDK 8 or later)
+- Git
+- Maven 3.x
+
+### Build Instructions
+
+#### Using Maven (Recommended)
+1. Clone the repository:
 ```sh
-# Git clone `main` branch.
 git clone https://github.com/snickerjp/orabbix.git -b main
-
 cd orabbix
-# download orabbix
-#from: https://sourceforge.net/projects/orabbix/
+```
 
+2. Build with Maven:
+```sh
+mvn clean package
+```
+
+The built JAR files will be available in the `target` directory:
+- `orabbix-1.0-SNAPSHOT.jar`: Basic JAR file
+- `orabbix-1.0-SNAPSHOT-jar-with-dependencies.jar`: JAR with all dependencies included
+
+#### Alternative Build Method (Legacy)
+
+1. Clone the repository:
+```sh
+git clone https://github.com/snickerjp/orabbix.git -b legacy
+cd orabbix
+```
+
+2. Download Orabbix:
+Download from: https://sourceforge.net/projects/orabbix/
+```sh
 unzip orabbix-1.2.3.zip
-OR
+# OR
 unzip -d orabbix-1.2.3 orabbix-1.2.3.zip
-ls -d orabbix-1.2.3
+```
 
-# compile
-# require. java-1.8.0-openjdk-devel(example RHEL yum system)
+3. Compile:
+```sh
+# Requires java-1.8.0-openjdk-devel (example for RHEL-based systems)
 javac -cp "$(for _JAR in orabbix-1.2.3/lib/*.jar;do echo -n $_JAR:;done)orabbix-1.2.3/orabbix-1.2.3.jar" com/smartmarmot/orabbix/Sender.java
 mkdir -p ./build
 cp orabbix-1.2.3/orabbix-1.2.3.jar ./build
@@ -31,37 +81,12 @@ cp ../com/smartmarmot/orabbix/Sender.class com/smartmarmot/orabbix/Sender.class
 jar -uf orabbix-1.2.3.jar com
 ```
 
-## Test
+## Screenshots
 
-### Zabbix
+![Orabbix Dashboard](https://github.com/snickerjp/orabbix/assets/1247622/4494419e-2a2d-41cd-a7cf-b8565b689cf9)
 
-- Work with Zabbix 4.0
-- Work with Zabbix 5.0
-- Work with Zabbix 6.0
-- Work with Zabbix 7.0
+## Notes
+- Main development branch is `main`
+- Branch `legacy` is legacy style
 
-### Java
-
-- Work with Java7 (Java 7 is not currently being tested.)
-- Work with Java8
-- Work with Java17
-- Work with Java21 (Now testing)
-
-ref.
-
-- JP [Oracle Java SE Supportロードマップ \| Oracle 日本](https://www.oracle.com/jp/java/technologies/java-se-support-roadmap.html)
-- EN [Oracle Java SE Support Roadmap \| Oracle](https://www.oracle.com/java/technologies/java-se-support-roadmap.html)
-
-### Oracle Database
-
-- Work with 11g
-- Work with 12c
-- Work with 21c XE
-- Work with 23ai Free
-
-ex.
-snickerjp/orabbix#9
-
-## Screenshot
-
-![image](https://github.com/snickerjp/orabbix/assets/1247622/4494419e-2a2d-41cd-a7cf-b8565b689cf9)
+For more details and issues, please refer to the [GitHub Issues](https://github.com/snickerjp/orabbix/issues)
