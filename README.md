@@ -1,5 +1,16 @@
 # Orabbix - Oracle Database Monitoring for Zabbix
 
+> [!IMPORTANT]
+> **Official Oracle Zabbix Integration**: An official Oracle monitoring template is provided by Zabbix. We strongly recommend using this for more comprehensive and up-to-date monitoring features. 👍
+> *   [Oracle monitoring and integration with Zabbix](https://www.zabbix.com/jp/integrations/oracle)
+
+> [!WARNING]
+> **Regarding Orabbix Development Status**: ⚠️
+> *   Currently, active new feature development for Orabbix is not being pursued. 🛑
+> *   Future new feature development is also challenging. 😥
+> *   Bug fixes and security responses will be handled on a best-effort basis, but there are no plans for adding new features or making major changes. 🛠️
+> *   Thank you for your long-term use. 🙏
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/56a9164c812c4ea1a0fca04469616c7c)](https://app.codacy.com/app/snickerjp/orabbix?utm_source=github.com&utm_medium=referral&utm_content=snickerjp/orabbix&utm_campaign=Badge_Grade_Settings)
 
 Orabbix is a monitoring solution that integrates Oracle Database with Zabbix monitoring system.
