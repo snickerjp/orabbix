@@ -47,7 +47,7 @@ jobs:
 #          GITHUB_TOKEN: ${{ secrets.CUSTOM_TOKEN }}
 
     - name: Create issue
-      uses: peter-evans/create-issue-from-file@v5
+      uses: peter-evans/create-issue-from-file@v6
       with:
         title: Monthly issue metrics report
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
         SEARCH_QUERY: 'repo:snickerjp/orabbix is:pr created:${{ env.last_month }} -is:draft'
 
     - name: Create report for PRs
-      uses: peter-evans/create-issue-from-file@v5
+      uses: peter-evans/create-issue-from-file@v6
       with:
         title: Monthly PR metrics report
         token: ${{ secrets.GITHUB_TOKEN }}
