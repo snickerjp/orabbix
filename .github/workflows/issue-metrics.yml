@@ -48,11 +48,20 @@ jobs:
 
     - name: Create issue
       uses: peter-evans/create-issue-from-file@v6
+      id: create_monthly_report_issue # Add id
       with:
         title: Monthly issue metrics report
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
+        labels: metrics # Corrected labels
         #assignees: ${{ env.TEAM_MEMBERS }}
+
+    - name: Close monthly report issue # Add step to close issue
+      uses: peter-evans/close-issue@v5
+      with:
+        repository: snickerjp/orabbix
+        issue-number: ${{ steps.create_monthly_report_issue.outputs.issue-number }}
+        comment: Automated report, closing.
 
     - name: Report on PRs
       uses: github/issue-metrics@v3
@@ -62,7 +71,16 @@ jobs:
 
     - name: Create report for PRs
       uses: peter-evans/create-issue-from-file@v6
+      id: create_pr_report_issue # Add id
       with:
         title: Monthly PR metrics report
         token: ${{ secrets.GITHUB_TOKEN }}
         content-filepath: ./issue_metrics.md
+        labels: metrics # Corrected labels
+
+    - name: Close PR report issue # Add step to close issue
+      uses: peter-evans/close-issue@v5
+      with:
+        repository: snickerjp/orabbix
+        issue-number: ${{ steps.create_pr_report_issue.outputs.issue-number }}
+        comment: Automated report, closing.
