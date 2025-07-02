@@ -57,7 +57,7 @@ jobs:
         #assignees: ${{ env.TEAM_MEMBERS }}
 
     - name: Close monthly report issue # Add step to close issue
-      uses: peter-evans/close-issue@v5
+      uses: peter-evans/close-issue@v3
       with:
         repository: snickerjp/orabbix
         issue-number: ${{ steps.create_monthly_report_issue.outputs.issue-number }}
@@ -79,7 +79,7 @@ jobs:
         labels: metrics # Corrected labels
 
     - name: Close PR report issue # Add step to close issue
-      uses: peter-evans/close-issue@v5
+      uses: peter-evans/close-issue@v3
       with:
         repository: snickerjp/orabbix
         issue-number: ${{ steps.create_pr_report_issue.outputs.issue-number }}
