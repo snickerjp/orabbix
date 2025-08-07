@@ -10,7 +10,7 @@
     <junit.version>5.11.4</junit.version>
     <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-    <checkstyle.version>8.45.1</checkstyle.version>
+    <checkstyle.version>11.0.0</checkstyle.version>
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
     <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
