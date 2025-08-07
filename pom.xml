@@ -67,14 +67,14 @@
     <dependency>
         <groupId>com.oracle.database.jdbc</groupId>
         <artifactId>ojdbc8</artifactId>
-        <version>19.18.0.0</version>
+        <version>19.28.0.0</version>
     </dependency>
     
     <!-- Oracle Universal Connection Pool -->
     <dependency>
         <groupId>com.oracle.database.jdbc</groupId>
         <artifactId>ucp</artifactId>
-        <version>19.18.0.0</version>
+        <version>19.28.0.0</version>
     </dependency>
   </dependencies>
   <build>
